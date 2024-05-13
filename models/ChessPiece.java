@@ -12,4 +12,6 @@ public abstract class ChessPiece {
     }
 
     public abstract String getImagePath();
+
+    public abstract boolean isValidMove(int startRow, int startCol, int endRow, int endCol, ChessPiece[][] boardState);
 }

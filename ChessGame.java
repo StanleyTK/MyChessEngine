@@ -12,7 +12,8 @@ public class ChessGame {
     private JPanel boardPanel;
     private JPanel[][] boardCells;
     private ChessPiece[][] boardState;
-    private Point selectedPiece;
+    private Point selectedPiece; // Track the selected piece
+    private Color originalColor; // Track the original color of the selected cell
 
     public ChessGame() {
         frame = new JFrame("Chess Game");
@@ -40,10 +41,43 @@ public class ChessGame {
                 cell.setBackground(color);
                 setInitialPiece(row, col);
 
+                int finalRow = row;
+                int finalCol = col;
+                cell.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        handleCellClick(finalRow, finalCol);
+                    }
+                });
             }
         }
     }
 
+    private void handleCellClick(int row, int col) {
+        if (selectedPiece == null) {
+            if (boardState[row][col] != null) {
+                selectedPiece = new Point(row, col);
+                originalColor = boardCells[row][col].getBackground();
+                boardCells[row][col].setBackground(Color.YELLOW);
+                System.out.println("selected piece: " + selectedPiece);
+            }
+        } else {
+            boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
+            if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
+                movePiece(selectedPiece.x, selectedPiece.y, row, col);
+                System.out.println("moved piece: " + selectedPiece);
+            } else {
+                System.out.println("unmovable");
+            }
+            selectedPiece = null; // Reset after move
+        }
+    }
+
+    private void movePiece(int startRow, int startCol, int endRow, int endCol) {
+        boardState[endRow][endCol] = boardState[startRow][startCol];
+        boardState[startRow][startCol] = null;
+        updateBoard();
+    }
 
     private void updateBoard() {
         for (int row = 0; row < 8; row++) {

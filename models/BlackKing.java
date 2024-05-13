@@ -9,4 +9,9 @@ public class BlackKing extends ChessPiece {
     public String getImagePath() {
         return "public/bK.png";
     }
+
+    @Override
+    public boolean isValidMove(int startRow, int startCol, int endRow, int endCol, ChessPiece[][] boardState) {
+        return false;
+    }
 }
