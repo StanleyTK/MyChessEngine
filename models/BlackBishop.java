@@ -12,6 +12,29 @@ public class BlackBishop extends ChessPiece {
 
     @Override
     public boolean isValidMove(int startRow, int startCol, int endRow, int endCol, ChessPiece[][] boardState) {
-        return false;
+        int rowDiff = Math.abs(startRow - endRow);
+        int colDiff = Math.abs(startCol - endCol);
+
+        // Bishops move diagonally, so the absolute difference between rows and columns must be the same
+        if (rowDiff != colDiff) {
+            return false;
+        }
+
+        // Determine the direction of movement
+        int rowStep = (endRow - startRow) / rowDiff; // This will be 1 or -1
+        int colStep = (endCol - startCol) / colDiff; // This will be 1 or -1
+
+        // Check if there are any pieces in the way
+        int currentRow = startRow + rowStep;
+        int currentCol = startCol + colStep;
+        while (currentRow != endRow && currentCol != endCol) {
+            if (boardState[currentRow][currentCol] != null) {
+                return false; // There is a piece blocking the path
+            }
+            currentRow += rowStep;
+            currentCol += colStep;
+        }
+
+        return boardState[endRow][endCol] == null || !boardState[endRow][endCol].isBlack();
     }
 }
