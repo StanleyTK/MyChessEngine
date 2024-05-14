@@ -14,6 +14,9 @@ public class WhiteBishop extends ChessPiece {
     public boolean isValidMove(int startRow, int startCol, int endRow, int endCol, ChessPiece[][] boardState) {
         int rowDiff = Math.abs(startRow - endRow);
         int colDiff = Math.abs(startCol - endCol);
+        if (rowDiff == 0 && colDiff == 0) {
+            return false;
+        }
         if (colDiff != rowDiff) return false;
 
         int rowStep = (endRow - startRow) / rowDiff;

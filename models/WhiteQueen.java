@@ -14,6 +14,9 @@ public class WhiteQueen extends ChessPiece {
     public boolean isValidMove(int startRow, int startCol, int endRow, int endCol, ChessPiece[][] boardState) {
         int rowDiff = Math.abs(endRow - startRow);
         int colDiff = Math.abs(endCol - startCol);
+        if (rowDiff == 0 && colDiff == 0) {
+            return false;
+        }
 
         if (rowDiff == colDiff) {
             // Diagonal move (like a bishop)

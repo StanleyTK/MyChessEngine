@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import models.*;
+import java.util.Stack;
+
+
 
 public class BoardPanel extends JPanel {
     private JPanel[][] boardCells;
@@ -17,6 +20,9 @@ public class BoardPanel extends JPanel {
     private boolean blackKingMoved = false;
     private boolean[] whiteRookMoved = {false, false}; // [left rook, right rook]
     private boolean[] blackRookMoved = {false, false}; // [left rook, right rook]
+    private Stack<Move> moveHistory = new Stack<>();
+
+
 
     public BoardPanel() {
         setLayout(new GridLayout(8, 8));
@@ -55,31 +61,51 @@ public class BoardPanel extends JPanel {
                 selectedPiece = new Point(row, col);
                 originalColor = boardCells[row][col].getBackground();
                 boardCells[row][col].setBackground(Color.YELLOW);
-                System.out.println("selected piece: " + selectedPiece);
+//                System.out.println("selected piece: " + selectedPiece);
             }
         } else {
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
             if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
-                if (isCastlingMove(selectedPiece.x, selectedPiece.y, row, col)) {
-                    performCastling(selectedPiece.x, selectedPiece.y, row, col);
+                if (!isMoveLegal(selectedPiece.x, selectedPiece.y, row, col)) {
+                    System.out.println("Move puts or leaves the king in check, invalid move.");
                 } else {
-                    movePiece(selectedPiece.x, selectedPiece.y, row, col);
-                }
-                if (isCheck(whiteTurn)) {
-                    if (isCheckmate(whiteTurn)) {
-                        System.out.println((whiteTurn ? "Black" : "White") + " is in checkmate!");
+                    if (isCastlingMove(selectedPiece.x, selectedPiece.y, row, col)) {
+                        performCastling(selectedPiece.x, selectedPiece.y, row, col);
                     } else {
-                        System.out.println((whiteTurn ? "Black" : "White") + " is in check!");
+                        movePiece(selectedPiece.x, selectedPiece.y, row, col);
                     }
+                    if (isCheck(whiteTurn)) {
+                        if (isCheckmate(whiteTurn)) {
+                            System.out.println((!whiteTurn ? "Black" : "White") + " is in checkmate!");
+                            setKingCellRed(whiteTurn);
+                        } else {
+                            System.out.println((whiteTurn ? "Black" : "White") + " is in check!");
+                            blinkRed(whiteTurn);
+                        }
+                    }
+                    whiteTurn = !whiteTurn;
                 }
-                whiteTurn = !whiteTurn;
-
-                System.out.println("moved piece: " + selectedPiece);
-            } else {
-                System.out.println("unmovable");
             }
             selectedPiece = null; // Reset after move
         }
+    }
+
+    private boolean isMoveLegal(int startRow, int startCol, int endRow, int endCol) {
+        // Save the original state of the destination cell
+        ChessPiece originalPiece = boardState[endRow][endCol];
+
+        // Move the piece to the new position temporarily
+        boardState[endRow][endCol] = boardState[startRow][startCol];
+        boardState[startRow][startCol] = null;
+
+        // Check if this move puts the current player's king in check
+        boolean inCheck = isCheck(!whiteTurn);
+
+        // Restore the original state of the board
+        boardState[startRow][startCol] = boardState[endRow][endCol];
+        boardState[endRow][endCol] = originalPiece;
+
+        return !inCheck;
     }
 
     private void movePiece(int startRow, int startCol, int endRow, int endCol) {
@@ -100,6 +126,7 @@ public class BoardPanel extends JPanel {
                 blackRookMoved[1] = true;
             }
         }
+        moveHistory.push(new Move(startRow, startCol, endRow, endCol, boardState[endRow][endCol]));
 
         boardState[endRow][endCol] = boardState[startRow][startCol];
         boardState[startRow][startCol] = null;
@@ -126,7 +153,7 @@ public class BoardPanel extends JPanel {
     private boolean canCastle(int kingRow, int kingCol, int rookRow, int rookCol) {
         int colStep = (rookCol > kingCol) ? 1 : -1;
         for (int currentCol = kingCol + colStep; currentCol != rookCol; currentCol += colStep) {
-            if (boardState[kingRow][currentCol] != null) {
+            if (boardState[kingRow][currentCol] != null || isInCheck(kingRow, kingCol, kingRow, currentCol)) {
                 return false;
             }
         }
@@ -274,15 +301,109 @@ public class BoardPanel extends JPanel {
         initializeBoard();
         revalidate();
         repaint();
+        moveHistory.clear();
+
     }
 
+
+
+
     public void handlePreviousMove() {
-        // TODO: Implement logic to revert to the previous move
-        System.out.println("Previous move");
+        if (!moveHistory.isEmpty()) {
+            Move lastMove = moveHistory.pop();
+            boardState[lastMove.startRow][lastMove.startCol] = boardState[lastMove.endRow][lastMove.endCol];
+            boardState[lastMove.endRow][lastMove.endCol] = lastMove.capturedPiece;
+            if (boardState[lastMove.startRow][lastMove.startCol] instanceof WhiteKing) {
+                whiteKingMoved = false;
+            } else if (boardState[lastMove.startRow][lastMove.startCol] instanceof BlackKing) {
+                blackKingMoved = false;
+            } else if (boardState[lastMove.startRow][lastMove.startCol] instanceof WhiteRook) {
+                if (lastMove.startRow == 7 && lastMove.startCol == 0) {
+                    whiteRookMoved[0] = false;
+                } else if (lastMove.startRow == 7 && lastMove.startCol == 7) {
+                    whiteRookMoved[1] = false;
+                }
+            } else if (boardState[lastMove.startRow][lastMove.startCol] instanceof BlackRook) {
+                if (lastMove.startRow == 0 && lastMove.startCol == 0) {
+                    blackRookMoved[0] = false;
+                } else if (lastMove.startRow == 0 && lastMove.startCol == 7) {
+                    blackRookMoved[1] = false;
+                }
+            }
+            whiteTurn = !whiteTurn;
+            updateBoard();
+        }
     }
 
     public void handleResetBoard() {
         resetBoard();
         System.out.println("Reset board");
+    }
+    private void blinkRed(boolean whiteTurn) {
+        int kingRow = -1, kingCol = -1;
+        outerloop:
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (boardState[row][col] instanceof WhiteKing && !whiteTurn) {
+                    kingRow = row;
+                    kingCol = col;
+                    break outerloop;
+                } else if (boardState[row][col] instanceof BlackKing && whiteTurn) {
+                    kingRow = row;
+                    kingCol = col;
+                    break outerloop;
+                }
+            }
+        }
+
+        Timer timer = new Timer(200, null);
+        int[] blinkCount = {0}; // Array to use as a counter
+        int finalKingRow = kingRow;
+        int finalKingCol = kingCol;
+
+        timer.addActionListener(e -> {
+            Color currentColor = boardCells[finalKingRow][finalKingCol].getBackground();
+            boardCells[finalKingRow][finalKingCol].setBackground(currentColor == Color.RED ? (finalKingRow + finalKingCol) % 2 == 0 ? Color.WHITE : Color.GRAY : Color.RED);
+            blinkCount[0]++;
+            if (blinkCount[0] >= 4) {
+                timer.stop();
+                boardCells[finalKingRow][finalKingCol].setBackground((finalKingRow + finalKingCol) % 2 == 0 ? Color.WHITE : Color.GRAY);
+            }
+        });
+        timer.setRepeats(true);
+        timer.start();
+    }
+
+
+    private void setKingCellRed(boolean whiteTurn) {
+        int kingRow = -1, kingCol = -1;
+        outerloop:
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (boardState[row][col] instanceof WhiteKing && !whiteTurn) {
+                    kingRow = row;
+                    kingCol = col;
+                    break outerloop;
+                } else if (boardState[row][col] instanceof BlackKing && whiteTurn) {
+                    kingRow = row;
+                    kingCol = col;
+                    break outerloop;
+                }
+            }
+        }
+        boardCells[kingRow][kingCol].setBackground(Color.RED);
+    }
+
+    private static class Move {
+        int startRow, startCol, endRow, endCol;
+        ChessPiece capturedPiece;
+
+        Move(int startRow, int startCol, int endRow, int endCol, ChessPiece capturedPiece) {
+            this.startRow = startRow;
+            this.startCol = startCol;
+            this.endRow = endRow;
+            this.endCol = endCol;
+            this.capturedPiece = capturedPiece;
+        }
     }
 }

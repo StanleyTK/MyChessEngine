@@ -14,11 +14,15 @@ public class BlackBishop extends ChessPiece {
     public boolean isValidMove(int startRow, int startCol, int endRow, int endCol, ChessPiece[][] boardState) {
         int rowDiff = Math.abs(startRow - endRow);
         int colDiff = Math.abs(startCol - endCol);
+        if (rowDiff == 0 && colDiff == 0) {
+            return false;
+        }
 
         // Bishops move diagonally, so the absolute difference between rows and columns must be the same
         if (rowDiff != colDiff) {
             return false;
         }
+
 
         // Determine the direction of movement
         int rowStep = (endRow - startRow) / rowDiff; // This will be 1 or -1
