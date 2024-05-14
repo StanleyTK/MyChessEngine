@@ -59,13 +59,21 @@ public class BoardPanel extends JPanel {
             }
         } else {
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
-             if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
+            if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
                 if (isCastlingMove(selectedPiece.x, selectedPiece.y, row, col)) {
                     performCastling(selectedPiece.x, selectedPiece.y, row, col);
                 } else {
                     movePiece(selectedPiece.x, selectedPiece.y, row, col);
                 }
+                if (isCheck(whiteTurn)) {
+                    if (isCheckmate(whiteTurn)) {
+                        System.out.println((whiteTurn ? "Black" : "White") + " is in checkmate!");
+                    } else {
+                        System.out.println((whiteTurn ? "Black" : "White") + " is in check!");
+                    }
+                }
                 whiteTurn = !whiteTurn;
+
                 System.out.println("moved piece: " + selectedPiece);
             } else {
                 System.out.println("unmovable");
@@ -122,7 +130,10 @@ public class BoardPanel extends JPanel {
                 return false;
             }
         }
-        // TODO: Add check to ensure king is not in check and does not move through check
+        // Ensure king is not in check and does not move through check
+        if (isInCheck(kingRow, kingCol, kingRow, kingCol + colStep) || isInCheck(kingRow, kingCol, kingRow, kingCol + 2 * colStep)) {
+            return false;
+        }
         return true;
     }
 
@@ -195,6 +206,65 @@ public class BoardPanel extends JPanel {
         if (boardState[row][col] != null) {
             loadImage(boardCells[row][col], boardState[row][col].getImagePath());
         }
+    }
+
+    private boolean isInCheck(int kingRow, int kingCol, int moveToRow, int moveToCol) {
+        ChessPiece originalPiece = boardState[moveToRow][moveToCol];
+        boardState[moveToRow][moveToCol] = boardState[kingRow][kingCol];
+        boardState[kingRow][kingCol] = null;
+
+        boolean isInCheck = isCheck(whiteTurn);
+
+        boardState[kingRow][kingCol] = boardState[moveToRow][moveToCol];
+        boardState[moveToRow][moveToCol] = originalPiece;
+
+        return isInCheck;
+    }
+
+    private boolean isCheck(boolean whiteTurn) {
+        int kingRow = -1, kingCol = -1;
+        outerloop:
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (boardState[row][col] instanceof WhiteKing && !whiteTurn) {
+                    kingRow = row;
+                    kingCol = col;
+                    break outerloop;
+                } else if (boardState[row][col] instanceof BlackKing && whiteTurn) {
+                    kingRow = row;
+                    kingCol = col;
+                    break outerloop;
+                }
+            }
+        }
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (boardState[row][col] != null && boardState[row][col].isBlack() != whiteTurn &&
+                        boardState[row][col].isValidMove(row, col, kingRow, kingCol, boardState)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isCheckmate(boolean whiteTurn) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (boardState[row][col] != null && boardState[row][col].isBlack() == whiteTurn) {
+                    for (int moveToRow = 0; moveToRow < 8; moveToRow++) {
+                        for (int moveToCol = 0; moveToCol < 8; moveToCol++) {
+                            if (boardState[row][col].isValidMove(row, col, moveToRow, moveToCol, boardState) &&
+                                    !isInCheck(row, col, moveToRow, moveToCol)) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public void resetBoard() {
