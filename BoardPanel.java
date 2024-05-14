@@ -63,13 +63,9 @@ public class BoardPanel extends JPanel {
                 if (!isMoveLegal(selectedPiece.x, selectedPiece.y, row, col)) {
                     System.out.println("Move puts or leaves the king in check, invalid move.");
                 } else {
-                    if (isCastlingMove(selectedPiece.x, selectedPiece.y, row, col)) {
-                        performCastling(selectedPiece.x, selectedPiece.y, row, col);
-                    } else {
-                        movePiece(selectedPiece.x, selectedPiece.y, row, col);
-                        if (isPromotion(row, col)) {
-                            promotePawn(row, col);
-                        }
+                    movePiece(selectedPiece.x, selectedPiece.y, row, col, boardState[row][col]);
+                    if (isPromotion(row, col)) {
+                        promotePawn(row, col);
                     }
                     if (isCheck(whiteTurn)) {
                         if (isCheckmate(whiteTurn)) {
@@ -106,7 +102,7 @@ public class BoardPanel extends JPanel {
         return !inCheck;
     }
 
-    private void movePiece(int startRow, int startCol, int endRow, int endCol) {
+    private void movePiece(int startRow, int startCol, int endRow, int endCol, ChessPiece chessPiece) {
         if (boardState[startRow][startCol] instanceof WhiteKing) {
             whiteKingMoved = true;
         } else if (boardState[startRow][startCol] instanceof BlackKing) {
@@ -130,49 +126,6 @@ public class BoardPanel extends JPanel {
         updateBoard();
     }
 
-
-    private boolean isCastlingMove(int startRow, int startCol, int endRow, int endCol) {
-        if (boardState[startRow][startCol] instanceof WhiteKing && startRow == 7 && startCol == 4) {
-            if (endRow == 7 && endCol == 6 && !whiteKingMoved && !whiteRookMoved[1]) {
-                return canCastle(7, 4, 7, 7);
-            } else if (endRow == 7 && endCol == 2 && !whiteKingMoved && !whiteRookMoved[0]) {
-                return canCastle(7, 4, 7, 0);
-            }
-        } else if (boardState[startRow][startCol] instanceof BlackKing && startRow == 0 && startCol == 4) {
-            if (endRow == 0 && endCol == 6 && !blackKingMoved && !blackRookMoved[1]) {
-                return canCastle(0, 4, 0, 7);
-            } else if (endRow == 0 && endCol == 2 && !blackKingMoved && !blackRookMoved[0]) {
-                return canCastle(0, 4, 0, 0);
-            }
-        }
-        return false;
-    }
-
-    private boolean canCastle(int kingRow, int kingCol, int rookRow, int rookCol) {
-        int colStep = (rookCol > kingCol) ? 1 : -1;
-        for (int currentCol = kingCol + colStep; currentCol != rookCol; currentCol += colStep) {
-            if (boardState[kingRow][currentCol] != null || isInCheck(kingRow, kingCol, kingRow, currentCol)) {
-                return false;
-            }
-        }
-        // Ensure king is not in check and does not move through check
-        if (isInCheck(kingRow, kingCol, kingRow, kingCol + colStep) || isInCheck(kingRow, kingCol, kingRow, kingCol + 2 * colStep)) {
-            return false;
-        }
-        return true;
-    }
-
-    private void performCastling(int kingRow, int kingCol, int endRow, int endCol) {
-        if (endCol == 6) {
-            // King-side castling
-            movePiece(kingRow, kingCol, endRow, endCol);
-            movePiece(kingRow, 7, kingRow, 5);
-        } else if (endCol == 2) {
-            // Queen-side castling
-            movePiece(kingRow, kingCol, endRow, endCol);
-            movePiece(kingRow, 0, kingRow, 3);
-        }
-    }
 
 
 
