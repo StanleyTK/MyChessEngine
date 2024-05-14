@@ -8,8 +8,6 @@ import javax.imageio.ImageIO;
 import models.*;
 import java.util.Stack;
 
-
-
 public class BoardPanel extends JPanel {
     private JPanel[][] boardCells;
     private ChessPiece[][] boardState;
@@ -21,8 +19,6 @@ public class BoardPanel extends JPanel {
     private boolean[] whiteRookMoved = {false, false}; // [left rook, right rook]
     private boolean[] blackRookMoved = {false, false}; // [left rook, right rook]
     private Stack<Move> moveHistory = new Stack<>();
-
-
 
     public BoardPanel() {
         setLayout(new GridLayout(8, 8));
@@ -54,14 +50,12 @@ public class BoardPanel extends JPanel {
             }
         }
     }
-
     private void handleCellClick(int row, int col) {
         if (selectedPiece == null) {
             if (boardState[row][col] != null && boardState[row][col].isBlack() == !whiteTurn) {
                 selectedPiece = new Point(row, col);
                 originalColor = boardCells[row][col].getBackground();
                 boardCells[row][col].setBackground(Color.YELLOW);
-//                System.out.println("selected piece: " + selectedPiece);
             }
         } else {
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
@@ -73,6 +67,9 @@ public class BoardPanel extends JPanel {
                         performCastling(selectedPiece.x, selectedPiece.y, row, col);
                     } else {
                         movePiece(selectedPiece.x, selectedPiece.y, row, col);
+                        if (isPromotion(row, col)) {
+                            promotePawn(row, col);
+                        }
                     }
                     if (isCheck(whiteTurn)) {
                         if (isCheckmate(whiteTurn)) {
@@ -89,6 +86,7 @@ public class BoardPanel extends JPanel {
             selectedPiece = null; // Reset after move
         }
     }
+
 
     private boolean isMoveLegal(int startRow, int startCol, int endRow, int endCol) {
         // Save the original state of the destination cell
@@ -127,11 +125,11 @@ public class BoardPanel extends JPanel {
             }
         }
         moveHistory.push(new Move(startRow, startCol, endRow, endCol, boardState[endRow][endCol]));
-
         boardState[endRow][endCol] = boardState[startRow][startCol];
         boardState[startRow][startCol] = null;
         updateBoard();
     }
+
 
     private boolean isCastlingMove(int startRow, int startCol, int endRow, int endCol) {
         if (boardState[startRow][startCol] instanceof WhiteKing && startRow == 7 && startCol == 4) {
@@ -175,6 +173,45 @@ public class BoardPanel extends JPanel {
             movePiece(kingRow, 0, kingRow, 3);
         }
     }
+
+
+
+    private boolean isPromotion(int row, int col) {
+        return (boardState[row][col] instanceof WhitePawn && row == 0) ||
+                (boardState[row][col] instanceof BlackPawn && row == 7);
+    }
+
+    private void promotePawn(int row, int col) {
+        String[] options = {"Queen", "Rook", "Bishop", "Knight"};
+        int choice = JOptionPane.showOptionDialog(this,
+                "Promote pawn to:",
+                "Pawn Promotion",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        switch (choice) {
+            case 0:
+                boardState[row][col] = whiteTurn ? new WhiteQueen() : new BlackQueen();
+                break;
+            case 1:
+                boardState[row][col] = whiteTurn ? new WhiteRook() : new BlackRook();
+                break;
+            case 2:
+                boardState[row][col] = whiteTurn ? new WhiteBishop() : new BlackBishop();
+                break;
+            case 3:
+                boardState[row][col] = whiteTurn ? new WhiteKnight() : new BlackKnight();
+                break;
+            default:
+                boardState[row][col] = whiteTurn ? new WhiteQueen() : new BlackQueen();
+                break;
+        }
+        updateBoard();
+    }
+
 
     private void updateBoard() {
         for (int row = 0; row < 8; row++) {
@@ -302,11 +339,7 @@ public class BoardPanel extends JPanel {
         revalidate();
         repaint();
         moveHistory.clear();
-
     }
-
-
-
 
     public void handlePreviousMove() {
         if (!moveHistory.isEmpty()) {
@@ -374,7 +407,6 @@ public class BoardPanel extends JPanel {
         timer.start();
     }
 
-
     private void setKingCellRed(boolean whiteTurn) {
         int kingRow = -1, kingCol = -1;
         outerloop:
@@ -394,16 +426,4 @@ public class BoardPanel extends JPanel {
         boardCells[kingRow][kingCol].setBackground(Color.RED);
     }
 
-    private static class Move {
-        int startRow, startCol, endRow, endCol;
-        ChessPiece capturedPiece;
-
-        Move(int startRow, int startCol, int endRow, int endCol, ChessPiece capturedPiece) {
-            this.startRow = startRow;
-            this.startCol = startCol;
-            this.endRow = endRow;
-            this.endCol = endCol;
-            this.capturedPiece = capturedPiece;
-        }
-    }
 }
