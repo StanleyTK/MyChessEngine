@@ -14,6 +14,11 @@ public class ChessGame {
     private ChessPiece[][] boardState;
     private Point selectedPiece; // Track the selected piece
     private Color originalColor; // Track the original color of the selected cell
+    private boolean whiteTurn = true;
+    private boolean whiteKingMoved = false;
+    private boolean blackKingMoved = false;
+    private boolean[] whiteRookMoved = {false, false}; // [left rook, right rook]
+    private boolean[] blackRookMoved = {false, false}; // [left rook, right rook]
 
     public ChessGame() {
         frame = new JFrame("Chess Game");
@@ -55,7 +60,7 @@ public class ChessGame {
 
     private void handleCellClick(int row, int col) {
         if (selectedPiece == null) {
-            if (boardState[row][col] != null) {
+            if (boardState[row][col] != null && boardState[row][col].isBlack() == !whiteTurn) {
                 selectedPiece = new Point(row, col);
                 originalColor = boardCells[row][col].getBackground();
                 boardCells[row][col].setBackground(Color.YELLOW);
@@ -64,7 +69,12 @@ public class ChessGame {
         } else {
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
             if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
-                movePiece(selectedPiece.x, selectedPiece.y, row, col);
+                if (isCastlingMove(selectedPiece.x, selectedPiece.y, row, col)) {
+                    performCastling(selectedPiece.x, selectedPiece.y, row, col);
+                } else {
+                    movePiece(selectedPiece.x, selectedPiece.y, row, col);
+                }
+                whiteTurn = !whiteTurn;
                 System.out.println("moved piece: " + selectedPiece);
             } else {
                 System.out.println("unmovable");
@@ -74,9 +84,67 @@ public class ChessGame {
     }
 
     private void movePiece(int startRow, int startCol, int endRow, int endCol) {
+        if (boardState[startRow][startCol] instanceof WhiteKing) {
+            whiteKingMoved = true;
+        } else if (boardState[startRow][startCol] instanceof BlackKing) {
+            blackKingMoved = true;
+        } else if (boardState[startRow][startCol] instanceof WhiteRook) {
+            if (startRow == 7 && startCol == 0) {
+                whiteRookMoved[0] = true;
+            } else if (startRow == 7 && startCol == 7) {
+                whiteRookMoved[1] = true;
+            }
+        } else if (boardState[startRow][startCol] instanceof BlackRook) {
+            if (startRow == 0 && startCol == 0) {
+                blackRookMoved[0] = true;
+            } else if (startRow == 0 && startCol == 7) {
+                blackRookMoved[1] = true;
+            }
+        }
+
         boardState[endRow][endCol] = boardState[startRow][startCol];
         boardState[startRow][startCol] = null;
         updateBoard();
+    }
+
+    private boolean isCastlingMove(int startRow, int startCol, int endRow, int endCol) {
+        if (boardState[startRow][startCol] instanceof WhiteKing && startRow == 7 && startCol == 4) {
+            if (endRow == 7 && endCol == 6 && !whiteKingMoved && !whiteRookMoved[1]) {
+                return canCastle(7, 4, 7, 7);
+            } else if (endRow == 7 && endCol == 2 && !whiteKingMoved && !whiteRookMoved[0]) {
+                return canCastle(7, 4, 7, 0);
+            }
+        } else if (boardState[startRow][startCol] instanceof BlackKing && startRow == 0 && startCol == 4) {
+            if (endRow == 0 && endCol == 6 && !blackKingMoved && !blackRookMoved[1]) {
+                return canCastle(0, 4, 0, 7);
+            } else if (endRow == 0 && endCol == 2 && !blackKingMoved && !blackRookMoved[0]) {
+                return canCastle(0, 4, 0, 0);
+            }
+        }
+        return false;
+    }
+
+    private boolean canCastle(int kingRow, int kingCol, int rookRow, int rookCol) {
+        int colStep = (rookCol > kingCol) ? 1 : -1;
+        for (int currentCol = kingCol + colStep; currentCol != rookCol; currentCol += colStep) {
+            if (boardState[kingRow][currentCol] != null) {
+                return false;
+            }
+        }
+        // TODO: Add check to ensure king is not in check and does not move through check
+        return true;
+    }
+
+    private void performCastling(int kingRow, int kingCol, int endRow, int endCol) {
+        if (endCol == 6) {
+            // King-side castling
+            movePiece(kingRow, kingCol, endRow, endCol);
+            movePiece(kingRow, 7, kingRow, 5);
+        } else if (endCol == 2) {
+            // Queen-side castling
+            movePiece(kingRow, kingCol, endRow, endCol);
+            movePiece(kingRow, 0, kingRow, 3);
+        }
     }
 
     private void updateBoard() {

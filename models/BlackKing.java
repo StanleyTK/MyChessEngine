@@ -2,7 +2,7 @@ package models;
 
 public class BlackKing extends ChessPiece {
     public BlackKing() {
-        super(false);
+        super(true);
     }
 
     @Override
