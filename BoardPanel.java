@@ -59,7 +59,8 @@ public class BoardPanel extends JPanel {
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
             if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
                 if (!Utils.isMoveLegal(boardState, whiteTurn, selectedPiece.x, selectedPiece.y, row, col)) {
-                    System.out.println("Move puts or leaves the king in check, invalid move.");
+                    Utils.blinkRed(boardCells, boardState, selectedPiece.x, selectedPiece.y);
+//                    System.out.println("Move puts or leaves the king in check, invalid move.");
                 } else {
                     movePiece(selectedPiece.x, selectedPiece.y, row, col, boardState[row][col]);
                     if (isPromotion(row, col)) {
@@ -71,7 +72,8 @@ public class BoardPanel extends JPanel {
                             Utils.setKingCellRed(boardCells, boardState, whiteTurn);
                         } else {
                             System.out.println((whiteTurn ? "Black" : "White") + " is in check!");
-                            Utils.blinkRed(boardCells, boardState, whiteTurn);
+                            int[] king = Utils.findKing(boardState, whiteTurn);
+                            Utils.blinkRed(boardCells, boardState, king[0], king[1]);
                         }
                     }
                     whiteTurn = !whiteTurn;

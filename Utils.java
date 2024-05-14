@@ -94,36 +94,37 @@ public class Utils {
         }
         return true;
     }
-
-    public static void blinkRed(JPanel[][] boardCells, ChessPiece[][] boardState, boolean whiteTurn) {
-        int kingRow = -1, kingCol = -1;
-        outerloop:
+    public static int[] findKing(ChessPiece[][] boardState, boolean whiteTurn) {
+        int[] king = new int[2];
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (boardState[row][col] instanceof WhiteKing && !whiteTurn) {
-                    kingRow = row;
-                    kingCol = col;
-                    break outerloop;
+                    king[0] = row;
+                    king[1] = col;
+                    break;
                 } else if (boardState[row][col] instanceof BlackKing && whiteTurn) {
-                    kingRow = row;
-                    kingCol = col;
-                    break outerloop;
+                    king[0] = row;
+                    king[1] = col;
+                    break;
                 }
             }
         }
+        return king;
+    }
+
+
+    public static void blinkRed(JPanel[][] boardCells, ChessPiece[][] boardState, int row, int col) {
 
         Timer timer = new Timer(200, null);
-        int[] blinkCount = {0}; // Array to use as a counter
-        int finalKingRow = kingRow;
-        int finalKingCol = kingCol;
+        int[] blinkCount = {0};
 
         timer.addActionListener(e -> {
-            Color currentColor = boardCells[finalKingRow][finalKingCol].getBackground();
-            boardCells[finalKingRow][finalKingCol].setBackground(currentColor == Color.RED ? (finalKingRow + finalKingCol) % 2 == 0 ? Color.WHITE : Color.GRAY : Color.RED);
+            Color currentColor = boardCells[row][col].getBackground();
+            boardCells[row][col].setBackground(currentColor == Color.RED ? (row + col) % 2 == 0 ? Color.WHITE : Color.GRAY : Color.RED);
             blinkCount[0]++;
             if (blinkCount[0] >= 4) {
                 timer.stop();
-                boardCells[finalKingRow][finalKingCol].setBackground((finalKingRow + finalKingCol) % 2 == 0 ? Color.WHITE : Color.GRAY);
+                boardCells[row][col].setBackground((row + col) % 2 == 0 ? Color.WHITE : Color.GRAY);
             }
         });
         timer.setRepeats(true);
@@ -131,18 +132,18 @@ public class Utils {
     }
 
     public static void setKingCellRed(JPanel[][] boardCells, ChessPiece[][] boardState, boolean whiteTurn) {
-        int kingRow = -1, kingCol = -1;
-        outerloop:
+        int kingRow = -1;
+        int kingCol = -1;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (boardState[row][col] instanceof WhiteKing && !whiteTurn) {
                     kingRow = row;
                     kingCol = col;
-                    break outerloop;
+                    break;
                 } else if (boardState[row][col] instanceof BlackKing && whiteTurn) {
                     kingRow = row;
                     kingCol = col;
-                    break outerloop;
+                    break;
                 }
             }
         }
