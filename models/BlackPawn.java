@@ -17,6 +17,8 @@ public class BlackPawn extends ChessPiece {
                 return true; // Double move from starting position
             }
             return endRow == startRow + 1;
+        } else if (Math.abs(startCol - endCol) == 1 && endRow == startRow + 1 && boardState[endRow][endCol] != null && !boardState[endRow][endCol].isBlack()) {
+            return true; // Capture move
         }
         return false;
     }

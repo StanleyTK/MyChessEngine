@@ -45,7 +45,7 @@ public class ChessGame {
                 int finalCol = col;
                 cell.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
+                    public void mousePressed(MouseEvent e) {
                         handleCellClick(finalRow, finalCol);
                     }
                 });
