@@ -26,6 +26,6 @@ public class ProgressPanel extends JPanel {
 
     private void updateStatusLabel() {
         int evaluation = boardPanel.getBoardEvaluation();
-        statusLabel.setText("eval: " + evaluation);
+        statusLabel.setText("Evaluation: " + evaluation);
     }
 }
