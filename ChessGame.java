@@ -1,6 +1,8 @@
-
 import javax.swing.*;
 import java.awt.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
 
 public class ChessGame {
     private JFrame frame;
@@ -24,6 +26,40 @@ public class ChessGame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(ChessGame::new);
+        // Capture memory and CPU usage before running the application
+        long beforeUsedMemory = getUsedMemory();
+        long beforeCPUTime = getProcessCpuTime();
+
+        SwingUtilities.invokeLater(() -> {
+            new ChessGame();
+        });
+
+        // Add a shutdown hook to capture memory and CPU usage after the application exits
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            long afterUsedMemory = getUsedMemory();
+            long afterCPUTime = getProcessCpuTime();
+            System.out.println("-----------MEM USAGE------------");
+            System.out.println("Memory usage before: " + beforeUsedMemory / 1024 + " KB");
+            System.out.println("Memory usage after: " + afterUsedMemory / 1024 + " KB");
+            System.out.println("Memory used: " + (afterUsedMemory - beforeUsedMemory) / 1024 + " KB\n\n");
+            System.out.println("-----------CPU USAGE------------");
+
+            System.out.println("CPU time before: " + beforeCPUTime / 1_000_000 + " ms");
+            System.out.println("CPU time after: " + afterCPUTime / 1_000_000 + " ms");
+            System.out.println("CPU time used: " + (afterCPUTime - beforeCPUTime) / 1_000_000 + " ms");
+        }));
+    }
+
+    private static long getUsedMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        return runtime.totalMemory() - runtime.freeMemory();
+    }
+
+    private static long getProcessCpuTime() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        if (osBean instanceof com.sun.management.OperatingSystemMXBean) {
+            return ((com.sun.management.OperatingSystemMXBean) osBean).getProcessCpuTime();
+        }
+        return 0;
     }
 }

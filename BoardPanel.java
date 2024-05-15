@@ -76,10 +76,10 @@ public class BoardPanel extends JPanel {
                     }
                     if (Utils.isCheck(boardState, whiteTurn)) {
                         if (Utils.isCheckmate(boardState, whiteTurn)) {
-                            System.out.println((!whiteTurn ? "Black" : "White") + " is in checkmate!");
+//                            System.out.println((!whiteTurn ? "Black" : "White") + " is in checkmate!");
                             Utils.setKingCellRed(boardCells, boardState, whiteTurn);
                         } else {
-                            System.out.println((whiteTurn ? "Black" : "White") + " is in check!");
+//                            System.out.println((whiteTurn ? "Black" : "White") + " is in check!");
                             int[] king = Utils.findKing(boardState, whiteTurn);
                             Utils.blinkRed(boardCells, king[0], king[1]);
                         }

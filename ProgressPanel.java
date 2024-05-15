@@ -18,7 +18,7 @@ public class ProgressPanel extends JPanel {
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         add(statusLabel);
-        add(Box.createVerticalStrut(20)); // Spacer
+        add(Box.createVerticalStrut(20));
 
         Timer timer = new Timer(300, e -> updateStatusLabel());
         timer.start();
@@ -26,6 +26,6 @@ public class ProgressPanel extends JPanel {
 
     private void updateStatusLabel() {
         int evaluation = boardPanel.getBoardEvaluation();
-        statusLabel.setText("Evaluation: " + evaluation);
+        statusLabel.setText("eval: " + evaluation);
     }
 }

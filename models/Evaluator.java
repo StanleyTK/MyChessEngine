@@ -1,8 +1,17 @@
 package models;
 
+import java.util.Arrays;
+
 public class Evaluator {
 
+    private static ChessPiece[][] cachedBoardState;
+    private static int cachedEvaluation;
+
     public static int evaluateBoard(ChessPiece[][] boardState) {
+        if (cachedBoardState != null && Arrays.deepEquals(boardState, cachedBoardState)) {
+            return cachedEvaluation;
+        }
+
         int totalWhiteScore = 0;
         int totalBlackScore = 0;
 
@@ -19,7 +28,11 @@ public class Evaluator {
             }
         }
 
-        return totalWhiteScore - totalBlackScore;
+        int evaluation = totalWhiteScore - totalBlackScore;
+        cachedBoardState = copyBoardState(boardState);
+        cachedEvaluation = evaluation;
+
+        return evaluation;
     }
 
     private static int getPieceValue(ChessPiece piece, int row, int col, boolean isWhite) {
@@ -52,5 +65,16 @@ public class Evaluator {
 
     private static int calculateScore(int pieceValue, double positionValue) {
         return (int) (pieceValue + (pieceValue * positionValue));
+    }
+
+    private static ChessPiece[][] copyBoardState(ChessPiece[][] boardState) {
+        ChessPiece[][] newBoardState = new ChessPiece[boardState.length][];
+        for (int i = 0; i < boardState.length; i++) {
+            newBoardState[i] = new ChessPiece[boardState[i].length];
+            for (int j = 0; j < boardState[i].length; j++) {
+                newBoardState[i][j] = boardState[i][j];
+            }
+        }
+        return newBoardState;
     }
 }
