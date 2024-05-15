@@ -1,6 +1,7 @@
 package models;
 
 import java.util.Arrays;
+import java.awt.Point;
 
 public class BoardState {
     private ChessPiece[][] boardState;
@@ -9,8 +10,10 @@ public class BoardState {
     private boolean blackKingMoved;
     private boolean[] whiteRookMoved;
     private boolean[] blackRookMoved;
+    private Point lastMoveStart;
+    private Point lastMoveEnd;
 
-    public BoardState(ChessPiece[][] boardState, boolean whiteTurn, boolean whiteKingMoved, boolean blackKingMoved, boolean[] whiteRookMoved, boolean[] blackRookMoved) {
+    public BoardState(ChessPiece[][] boardState, boolean whiteTurn, boolean whiteKingMoved, boolean blackKingMoved, boolean[] whiteRookMoved, boolean[] blackRookMoved, Point lastMoveStart, Point lastMoveEnd) {
         this.boardState = new ChessPiece[8][8];
         for (int i = 0; i < 8; i++) {
             this.boardState[i] = Arrays.copyOf(boardState[i], 8);
@@ -20,6 +23,8 @@ public class BoardState {
         this.blackKingMoved = blackKingMoved;
         this.whiteRookMoved = Arrays.copyOf(whiteRookMoved, 2);
         this.blackRookMoved = Arrays.copyOf(blackRookMoved, 2);
+        this.lastMoveStart = lastMoveStart != null ? new Point(lastMoveStart) : null;
+        this.lastMoveEnd = lastMoveEnd != null ? new Point(lastMoveEnd) : null;
     }
 
     public ChessPiece[][] getBoardState() {
@@ -48,5 +53,13 @@ public class BoardState {
 
     public boolean[] getBlackRookMoved() {
         return Arrays.copyOf(blackRookMoved, 2);
+    }
+
+    public Point getLastMoveStart() {
+        return lastMoveStart != null ? new Point(lastMoveStart) : null;
+    }
+
+    public Point getLastMoveEnd() {
+        return lastMoveEnd != null ? new Point(lastMoveEnd) : null;
     }
 }

@@ -16,6 +16,9 @@ public class BoardPanel extends JPanel {
     private boolean[] whiteRookMoved = {false, false};
     private boolean[] blackRookMoved = {false, false};
     private Stack<BoardState> moveHistory = new Stack<>();
+    private Point lastMoveStart = null;
+    private Point lastMoveEnd = null;
+
 
     public BoardPanel() {
         setLayout(new GridLayout(8, 8));
@@ -47,7 +50,6 @@ public class BoardPanel extends JPanel {
             }
         }
     }
-
     private void handleCellClick(int row, int col) {
         if (selectedPiece == null) {
             if (boardState[row][col] != null && boardState[row][col].isBlack() == !whiteTurn) {
@@ -58,13 +60,16 @@ public class BoardPanel extends JPanel {
         } else {
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
             if (isCastling(selectedPiece.x, selectedPiece.y, row, col)) {
-                moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved));
+                moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved, lastMoveStart, lastMoveEnd));
                 handleCastling(selectedPiece.x, selectedPiece.y, row, col);
+            } else if (isEnPassant(selectedPiece.x, selectedPiece.y, row, col)) {
+                moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved, lastMoveStart, lastMoveEnd));
+                handleEnPassant(selectedPiece.x, selectedPiece.y, row, col);
             } else if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
                 if (!Utils.isMoveLegal(boardState, whiteTurn, selectedPiece.x, selectedPiece.y, row, col)) {
                     Utils.blinkRed(boardCells, selectedPiece.x, selectedPiece.y);
                 } else {
-                    moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved));
+                    moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved, lastMoveStart, lastMoveEnd));
                     movePiece(selectedPiece.x, selectedPiece.y, row, col, boardState[row][col]);
                     if (isPromotion(row, col)) {
                         promotePawn(row, col);
@@ -85,6 +90,35 @@ public class BoardPanel extends JPanel {
             selectedPiece = null;
         }
     }
+
+    private boolean isEnPassant(int startX, int startY, int endX, int endY) {
+        if (boardState[startX][startY] instanceof WhitePawn && startX == 3 && endX == 2) {
+            return lastMoveEnd != null && lastMoveEnd.x == 3 && lastMoveEnd.y == endY &&
+                    boardState[lastMoveEnd.x][lastMoveEnd.y] instanceof BlackPawn &&
+                    lastMoveStart.x == 1 && lastMoveStart.y == endY;
+        } else if (boardState[startX][startY] instanceof BlackPawn && startX == 4 && endX == 5) {
+            return lastMoveEnd != null && lastMoveEnd.x == 4 && lastMoveEnd.y == endY &&
+                    boardState[lastMoveEnd.x][lastMoveEnd.y] instanceof WhitePawn &&
+                    lastMoveStart.x == 6 && lastMoveStart.y == endY;
+        }
+        return false;
+    }
+
+    private void handleEnPassant(int startX, int startY, int endX, int endY) {
+        boardState[endX][endY] = boardState[startX][startY];
+        boardState[startX][startY] = null;
+
+        if (endX == 2) {
+            boardState[3][endY] = null; // Capturing black pawn
+        } else if (endX == 5) {
+            boardState[4][endY] = null; // Capturing white pawn
+        }
+        updateBoard();
+        whiteTurn = !whiteTurn;
+    }
+
+
+
 
     private void handleCastling(int x, int y, int row, int col) {
         if (row == 7 && col == 6) {
@@ -172,8 +206,10 @@ public class BoardPanel extends JPanel {
         return isValid;
     }
 
-
     private void movePiece(int startRow, int startCol, int endRow, int endCol, ChessPiece chessPiece) {
+        lastMoveStart = new Point(startRow, startCol);
+        lastMoveEnd = new Point(endRow, endCol);
+
         if (boardState[startRow][startCol] instanceof WhiteKing) {
             whiteKingMoved = true;
         } else if (boardState[startRow][startCol] instanceof BlackKing) {
@@ -195,6 +231,8 @@ public class BoardPanel extends JPanel {
         boardState[startRow][startCol] = null;
         updateBoard();
     }
+
+
 
     private boolean isPromotion(int row, int col) {
         return (boardState[row][col] instanceof WhitePawn && row == 0) ||
@@ -289,9 +327,12 @@ public class BoardPanel extends JPanel {
             this.blackKingMoved = previousState.isBlackKingMoved();
             this.whiteRookMoved = previousState.getWhiteRookMoved();
             this.blackRookMoved = previousState.getBlackRookMoved();
+            this.lastMoveStart = previousState.getLastMoveStart();
+            this.lastMoveEnd = previousState.getLastMoveEnd();
             updateBoard();
         }
     }
+
 
     public void handleResetBoard() {
         removeAll();
