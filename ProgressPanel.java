@@ -6,10 +6,10 @@ public class ProgressPanel extends JPanel {
     private JLabel statusLabel;
     private JLabel bestWhiteMoveLabel;
     private JLabel bestBlackMoveLabel;
-    private BoardPanel boardPanel;
+    private PlayerVPlayerPanel playerVPlayerPanel;
 
-    public ProgressPanel(BoardPanel boardPanel) {
-        this.boardPanel = boardPanel;
+    public ProgressPanel(PlayerVPlayerPanel playerVPlayerPanel) {
+        this.playerVPlayerPanel = playerVPlayerPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(200, 600));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -38,11 +38,11 @@ public class ProgressPanel extends JPanel {
     }
 
     private void updateStatusLabel() {
-        int evaluation = boardPanel.getBoardEvaluation();
+        int evaluation = playerVPlayerPanel.getBoardEvaluation();
         statusLabel.setText("Evaluation: " + evaluation);
 
-        Move bestWhiteMove = Evaluator.getBestMove(boardPanel.getBoardState(), true);
-        Move bestBlackMove = Evaluator.getBestMove(boardPanel.getBoardState(), false);
+        Move bestWhiteMove = Evaluator.getBestMove(playerVPlayerPanel.getBoardState(), true);
+        Move bestBlackMove = Evaluator.getBestMove(playerVPlayerPanel.getBoardState(), false);
 
         bestWhiteMoveLabel.setText("<html>Best White Move: <br>" + (bestWhiteMove != null ? bestWhiteMove.toChessNotation() : "None") + "</html>");
         bestBlackMoveLabel.setText("<html>Best Black Move: <br>" + (bestBlackMove != null ? bestBlackMove.toChessNotation() : "None") + "</html>");

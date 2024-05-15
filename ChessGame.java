@@ -12,7 +12,8 @@ public class ChessGame {
 
     private JFrame frame;
     private static ChessGame instance;
-    private BoardPanel boardPanel;
+    private PlayerVPlayerPanel playerVPlayerPanel;
+
 
     public ChessGame() {
         instance = this;
@@ -32,12 +33,18 @@ public class ChessGame {
 
     public void setGameMode(GameMode gameMode) {
         frame.getContentPane().removeAll();
-        boardPanel = new BoardPanel();
+        playerVPlayerPanel = new PlayerVPlayerPanel();
 
-        ProgressPanel progressPanel = new ProgressPanel(boardPanel);
-        ControlPanel controlPanel = new ControlPanel(boardPanel);
-
-        frame.add(boardPanel, BorderLayout.CENTER);
+        ProgressPanel progressPanel = new ProgressPanel(playerVPlayerPanel);
+        ControlPanel controlPanel = new ControlPanel(playerVPlayerPanel);
+        if (gameMode == GameMode.HUMAN_VS_HUMAN) {
+            frame.add(playerVPlayerPanel, BorderLayout.CENTER);
+        }
+        else if (gameMode == GameMode.HUMAN_VS_AI) {
+            frame.add(playerVPlayerPanel, BorderLayout.CENTER);
+        } else {
+            frame.add(playerVPlayerPanel, BorderLayout.CENTER);
+        }
         frame.add(progressPanel, BorderLayout.WEST);
         frame.add(controlPanel, BorderLayout.EAST);
 

@@ -80,33 +80,6 @@ public class Evaluator {
 
     public static Move getBestMove(ChessPiece[][] boardState, boolean isWhite) {
         Move bestMove = null;
-        int bestEvaluation = isWhite ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-
-        for (int startRow = 0; startRow < boardState.length; startRow++) {
-            for (int startCol = 0; startCol < boardState[startRow].length; startCol++) {
-                ChessPiece piece = boardState[startRow][startCol];
-                if (piece != null && piece.isBlack() != isWhite) {
-                    for (int endRow = 0; endRow < boardState.length; endRow++) {
-                        for (int endCol = 0; endCol < boardState[endRow].length; endCol++) {
-                            if (piece.isValidMove(startRow, startCol, endRow, endCol, boardState)) {
-                                ChessPiece[][] newBoardState = copyBoardState(boardState);
-                                newBoardState[endRow][endCol] = newBoardState[startRow][startCol];
-                                newBoardState[startRow][startCol] = null;
-
-                                int evaluation = evaluateBoard(newBoardState);
-                                if (isWhite && evaluation > bestEvaluation) {
-                                    bestEvaluation = evaluation;
-                                    bestMove = new Move(startRow, startCol, endRow, endCol);
-                                } else if (!isWhite && evaluation < bestEvaluation) {
-                                    bestEvaluation = evaluation;
-                                    bestMove = new Move(startRow, startCol, endRow, endCol);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         return bestMove;
     }
 }

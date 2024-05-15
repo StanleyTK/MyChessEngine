@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ControlPanel extends JPanel {
-    public ControlPanel(BoardPanel boardPanel) {
+    public ControlPanel(PlayerVPlayerPanel playerVPlayerPanel) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(200, 600));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -10,11 +10,11 @@ public class ControlPanel extends JPanel {
 
         JButton previousMoveButton = new JButton("Previous Move");
         previousMoveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        previousMoveButton.addActionListener(e -> boardPanel.handlePreviousMove());
+        previousMoveButton.addActionListener(e -> playerVPlayerPanel.handlePreviousMove());
 
         JButton resetButton = new JButton("Reset Board");
         resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        resetButton.addActionListener(e -> boardPanel.handleResetBoard());
+        resetButton.addActionListener(e -> playerVPlayerPanel.handleResetBoard());
 
         JButton chooseGameModeButton = new JButton("Choose Game Mode");
         chooseGameModeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
