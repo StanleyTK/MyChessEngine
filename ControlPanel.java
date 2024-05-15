@@ -16,10 +16,15 @@ public class ControlPanel extends JPanel {
         resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         resetButton.addActionListener(e -> boardPanel.handleResetBoard());
 
+        JButton chooseGameModeButton = new JButton("Choose Game Mode");
+        chooseGameModeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        chooseGameModeButton.addActionListener(e -> ChessGame.getInstance().showModePanel());
 
         add(Box.createVerticalStrut(20)); // Spacer
         add(previousMoveButton);
         add(Box.createVerticalStrut(10)); // Spacer
         add(resetButton);
+        add(Box.createVerticalStrut(10)); // Spacer
+        add(chooseGameModeButton);
     }
 }

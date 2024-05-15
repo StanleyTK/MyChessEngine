@@ -3,6 +3,8 @@
 
 MyChessEngine is my Summer 2024 project designed to deepen understanding of chess and to explore chess engine algorithms such as the MinMax algorithm and various weighting systems. This project serves as both an educational tool and a foundation for developing advanced chess algorithms.
 
+To run the project, start the ChessGame.java module.
+
 ### Features
 * Full Chess Functionality: Supports all standard chess rules, including castling, en passant, and pawn promotion.
 * Game Management: Allows resetting the board and maintaining move histories to navigate back to previous moves.

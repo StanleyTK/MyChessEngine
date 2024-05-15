@@ -1,9 +1,11 @@
-
 import javax.swing.*;
 import java.awt.*;
+import models.*;
 
 public class ProgressPanel extends JPanel {
     private JLabel statusLabel;
+    private JLabel bestWhiteMoveLabel;
+    private JLabel bestBlackMoveLabel;
     private BoardPanel boardPanel;
 
     public ProgressPanel(BoardPanel boardPanel) {
@@ -17,8 +19,19 @@ public class ProgressPanel extends JPanel {
         statusLabel.setForeground(Color.WHITE);
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        bestWhiteMoveLabel = new JLabel("<html>Best White Move: <br>None</html>");
+        bestWhiteMoveLabel.setForeground(Color.WHITE);
+        bestWhiteMoveLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        bestBlackMoveLabel = new JLabel("<html>Best Black Move: <br>None</html>");
+        bestBlackMoveLabel.setForeground(Color.WHITE);
+        bestBlackMoveLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         add(statusLabel);
         add(Box.createVerticalStrut(20));
+        add(bestWhiteMoveLabel);
+        add(Box.createVerticalStrut(20));
+        add(bestBlackMoveLabel);
 
         Timer timer = new Timer(300, e -> updateStatusLabel());
         timer.start();
@@ -27,5 +40,11 @@ public class ProgressPanel extends JPanel {
     private void updateStatusLabel() {
         int evaluation = boardPanel.getBoardEvaluation();
         statusLabel.setText("Evaluation: " + evaluation);
+
+        Move bestWhiteMove = Evaluator.getBestMove(boardPanel.getBoardState(), true);
+        Move bestBlackMove = Evaluator.getBestMove(boardPanel.getBoardState(), false);
+
+        bestWhiteMoveLabel.setText("<html>Best White Move: <br>" + (bestWhiteMove != null ? bestWhiteMove.toChessNotation() : "None") + "</html>");
+        bestBlackMoveLabel.setText("<html>Best Black Move: <br>" + (bestBlackMove != null ? bestBlackMove.toChessNotation() : "None") + "</html>");
     }
 }

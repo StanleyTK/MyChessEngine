@@ -347,4 +347,9 @@ public class BoardPanel extends JPanel {
         return Evaluator.evaluateBoard(boardState);
     }
 
+    public ChessPiece[][] getBoardState() {
+        return boardState;
+    }
+
+
 }
