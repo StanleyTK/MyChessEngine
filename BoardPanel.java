@@ -8,14 +8,14 @@ import java.util.Stack;
 public class BoardPanel extends JPanel {
     private JPanel[][] boardCells;
     private ChessPiece[][] boardState;
-    private Point selectedPiece; // Track the selected piece
-    private Color originalColor; // Track the original color of the selected cell
+    private Point selectedPiece;
+    private Color originalColor;
     private boolean whiteTurn = true;
     private boolean whiteKingMoved = false;
     private boolean blackKingMoved = false;
-    private boolean[] whiteRookMoved = {false, false}; // [left rook, right rook]
-    private boolean[] blackRookMoved = {false, false}; // [left rook, right rook]
-    private Stack<Move> moveHistory = new Stack<>();
+    private boolean[] whiteRookMoved = {false, false};
+    private boolean[] blackRookMoved = {false, false};
+    private Stack<BoardState> moveHistory = new Stack<>();
 
     public BoardPanel() {
         setLayout(new GridLayout(8, 8));
@@ -57,11 +57,14 @@ public class BoardPanel extends JPanel {
             }
         } else {
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
-            if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
+            if (isCastling(selectedPiece.x, selectedPiece.y, row, col)) {
+                moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved));
+                handleCastling(selectedPiece.x, selectedPiece.y, row, col);
+            } else if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
                 if (!Utils.isMoveLegal(boardState, whiteTurn, selectedPiece.x, selectedPiece.y, row, col)) {
                     Utils.blinkRed(boardCells, boardState, selectedPiece.x, selectedPiece.y);
-//                    System.out.println("Move puts or leaves the king in check, invalid move.");
                 } else {
+                    moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved));
                     movePiece(selectedPiece.x, selectedPiece.y, row, col, boardState[row][col]);
                     if (isPromotion(row, col)) {
                         promotePawn(row, col);
@@ -79,9 +82,96 @@ public class BoardPanel extends JPanel {
                     whiteTurn = !whiteTurn;
                 }
             }
-            selectedPiece = null; // Reset after move
+            selectedPiece = null;
         }
     }
+
+    private void handleCastling(int x, int y, int row, int col) {
+        if (row == 7 && col == 6) {
+            // White kingside castling
+            boardState[7][6] = boardState[7][4];
+            boardState[7][4] = null;
+            boardState[7][5] = boardState[7][7];
+            boardState[7][7] = null;
+            whiteKingMoved = true;
+            whiteRookMoved[1] = true;
+        } else if (row == 7 && col == 2) {
+            // White queenside castling
+            boardState[7][2] = boardState[7][4];
+            boardState[7][4] = null;
+            boardState[7][3] = boardState[7][0];
+            boardState[7][0] = null;
+            whiteKingMoved = true;
+            whiteRookMoved[0] = true;
+        } else if (row == 0 && col == 6) {
+            // Black kingside castling
+            boardState[0][6] = boardState[0][4];
+            boardState[0][4] = null;
+            boardState[0][5] = boardState[0][7];
+            boardState[0][7] = null;
+            blackKingMoved = true;
+            blackRookMoved[1] = true;
+        } else if (row == 0 && col == 2) {
+            // Black queenside castling
+            boardState[0][2] = boardState[0][4];
+            boardState[0][4] = null;
+            boardState[0][3] = boardState[0][0];
+            boardState[0][0] = null;
+            blackKingMoved = true;
+            blackRookMoved[0] = true;
+        }
+        updateBoard();
+        whiteTurn = !whiteTurn;
+        selectedPiece = null;
+    }
+
+    private boolean isCastling(int x, int y, int row, int col) {
+        ChessPiece piece = boardState[x][y];
+        if (piece instanceof WhiteKing && !whiteKingMoved && x == 7 && y == 4) {
+            // White kingside castling
+            if (col == 6 && !whiteRookMoved[1] && boardState[7][5] == null && boardState[7][6] == null &&
+                    isCastlingValid(x, y, 7, 5) && isCastlingValid(x, y, 7, 6)) {
+                return true;
+            }
+            // White queenside castling
+            if (col == 2 && !whiteRookMoved[0] && boardState[7][1] == null && boardState[7][2] == null && boardState[7][3] == null &&
+                    isCastlingValid(x, y, 7, 3) && isCastlingValid(x, y, 7, 2)) {
+                return true;
+            }
+        }
+        if (piece instanceof BlackKing && !blackKingMoved && x == 0 && y == 4) {
+            // Black kingside castling
+            if (col == 6 && !blackRookMoved[1] && boardState[0][5] == null && boardState[0][6] == null &&
+                    isCastlingValid(x, y, 0, 5) && isCastlingValid(x, y, 0, 6)) {
+                return true;
+            }
+            // Black queenside castling
+            if (col == 2 && !blackRookMoved[0] && boardState[0][1] == null && boardState[0][2] == null && boardState[0][3] == null &&
+                    isCastlingValid(x, y, 0, 3) && isCastlingValid(x, y, 0, 2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isCastlingValid(int startX, int startY, int endX, int endY) {
+        // Temporarily make the move
+        if (Utils.isCheck(boardState, !whiteTurn)) {
+            return false;
+        }
+        ChessPiece temp = boardState[endX][endY];
+        boardState[endX][endY] = boardState[startX][startY];
+        boardState[startX][startY] = null;
+
+        boolean isValid = !Utils.isCheck(boardState, !whiteTurn);
+
+        // Revert the move
+        boardState[startX][startY] = boardState[endX][endY];
+        boardState[endX][endY] = temp;
+
+        return isValid;
+    }
+
 
     private void movePiece(int startRow, int startCol, int endRow, int endCol, ChessPiece chessPiece) {
         if (boardState[startRow][startCol] instanceof WhiteKing) {
@@ -101,7 +191,6 @@ public class BoardPanel extends JPanel {
                 blackRookMoved[1] = true;
             }
         }
-        moveHistory.push(new Move(startRow, startCol, endRow, endCol, boardState[endRow][endCol]));
         boardState[endRow][endCol] = boardState[startRow][startCol];
         boardState[startRow][startCol] = null;
         updateBoard();
@@ -191,7 +280,20 @@ public class BoardPanel extends JPanel {
         }
     }
 
-    public void resetBoard() {
+    public void handlePreviousMove() {
+        if (!moveHistory.isEmpty()) {
+            BoardState previousState = moveHistory.pop();
+            this.boardState = previousState.getBoardState();
+            this.whiteTurn = previousState.isWhiteTurn();
+            this.whiteKingMoved = previousState.isWhiteKingMoved();
+            this.blackKingMoved = previousState.isBlackKingMoved();
+            this.whiteRookMoved = previousState.getWhiteRookMoved();
+            this.blackRookMoved = previousState.getBlackRookMoved();
+            updateBoard();
+        }
+    }
+
+    public void handleResetBoard() {
         removeAll();
         whiteTurn = true;
         boardState = new ChessPiece[8][8];
@@ -199,37 +301,5 @@ public class BoardPanel extends JPanel {
         revalidate();
         repaint();
         moveHistory.clear();
-    }
-
-    public void handlePreviousMove() {
-        if (!moveHistory.isEmpty()) {
-            Move lastMove = moveHistory.pop();
-            boardState[lastMove.startRow][lastMove.startCol] = boardState[lastMove.endRow][lastMove.endCol];
-            boardState[lastMove.endRow][lastMove.endCol] = lastMove.capturedPiece;
-            if (boardState[lastMove.startRow][lastMove.startCol] instanceof WhiteKing) {
-                whiteKingMoved = false;
-            } else if (boardState[lastMove.startRow][lastMove.startCol] instanceof BlackKing) {
-                blackKingMoved = false;
-            } else if (boardState[lastMove.startRow][lastMove.startCol] instanceof WhiteRook) {
-                if (lastMove.startRow == 7 && lastMove.startCol == 0) {
-                    whiteRookMoved[0] = false;
-                } else if (lastMove.startRow == 7 && lastMove.startCol == 7) {
-                    whiteRookMoved[1] = false;
-                }
-            } else if (boardState[lastMove.startRow][lastMove.startCol] instanceof BlackRook) {
-                if (lastMove.startRow == 0 && lastMove.startCol == 0) {
-                    blackRookMoved[0] = false;
-                } else if (lastMove.startRow == 0 && lastMove.startCol == 7) {
-                    blackRookMoved[1] = false;
-                }
-            }
-            whiteTurn = !whiteTurn;
-            updateBoard();
-        }
-    }
-
-    public void handleResetBoard() {
-        resetBoard();
-        System.out.println("Reset board");
     }
 }

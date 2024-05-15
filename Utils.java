@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import models.*;
-
 public class Utils {
 
     public static void loadImage(JPanel square, String imagePath) {
@@ -19,17 +18,13 @@ public class Utils {
     }
 
     public static boolean isMoveLegal(ChessPiece[][] boardState, boolean whiteTurn, int startRow, int startCol, int endRow, int endCol) {
-        // Save the original state of the destination cell
         ChessPiece originalPiece = boardState[endRow][endCol];
 
-        // Move the piece to the new position temporarily
         boardState[endRow][endCol] = boardState[startRow][startCol];
         boardState[startRow][startCol] = null;
 
-        // Check if this move puts the current player's king in check
         boolean inCheck = isCheck(boardState, !whiteTurn);
 
-        // Restore the original state of the board
         boardState[startRow][startCol] = boardState[endRow][endCol];
         boardState[endRow][endCol] = originalPiece;
 
@@ -94,6 +89,7 @@ public class Utils {
         }
         return true;
     }
+
     public static int[] findKing(ChessPiece[][] boardState, boolean whiteTurn) {
         int[] king = new int[2];
         for (int row = 0; row < 8; row++) {
@@ -111,7 +107,6 @@ public class Utils {
         }
         return king;
     }
-
 
     public static void blinkRed(JPanel[][] boardCells, ChessPiece[][] boardState, int row, int col) {
 
@@ -149,4 +144,5 @@ public class Utils {
         }
         boardCells[kingRow][kingCol].setBackground(Color.RED);
     }
+
 }
