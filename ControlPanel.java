@@ -16,6 +16,7 @@ public class ControlPanel extends JPanel {
         resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         resetButton.addActionListener(e -> boardPanel.handleResetBoard());
 
+
         add(Box.createVerticalStrut(20)); // Spacer
         add(previousMoveButton);
         add(Box.createVerticalStrut(10)); // Spacer
