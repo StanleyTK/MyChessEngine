@@ -108,7 +108,7 @@ public class Utils {
         return king;
     }
 
-    public static void blinkRed(JPanel[][] boardCells, ChessPiece[][] boardState, int row, int col) {
+    public static void blinkRed(JPanel[][] boardCells, int row, int col) {
 
         Timer timer = new Timer(200, null);
         int[] blinkCount = {0};

@@ -62,7 +62,7 @@ public class BoardPanel extends JPanel {
                 handleCastling(selectedPiece.x, selectedPiece.y, row, col);
             } else if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
                 if (!Utils.isMoveLegal(boardState, whiteTurn, selectedPiece.x, selectedPiece.y, row, col)) {
-                    Utils.blinkRed(boardCells, boardState, selectedPiece.x, selectedPiece.y);
+                    Utils.blinkRed(boardCells, selectedPiece.x, selectedPiece.y);
                 } else {
                     moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved));
                     movePiece(selectedPiece.x, selectedPiece.y, row, col, boardState[row][col]);
@@ -76,7 +76,7 @@ public class BoardPanel extends JPanel {
                         } else {
                             System.out.println((whiteTurn ? "Black" : "White") + " is in check!");
                             int[] king = Utils.findKing(boardState, whiteTurn);
-                            Utils.blinkRed(boardCells, boardState, king[0], king[1]);
+                            Utils.blinkRed(boardCells, king[0], king[1]);
                         }
                     }
                     whiteTurn = !whiteTurn;
