@@ -1,14 +1,14 @@
 package models;
 
 public class Metrics {
-    private static final int PAWN_VAL = 100;
-    private static final int BISHOP_VAL = 330;
-    private static final int KNIGHT_VAL = 330;
-    private static final int ROOK_VAL = 500;
-    private static final int QUEEN_VAL = 900;
-    private static final int KING_VAL = 20000;
+    public static final int PAWN_VAL = 100;
+    public static final int BISHOP_VAL = 330;
+    public static final int KNIGHT_VAL = 330;
+    public static final int ROOK_VAL = 500;
+    public static final int QUEEN_VAL = 900;
+    public static final int KING_VAL = 20000;
 
-    private static final double[][] PAWN_W_EVAL = {
+    public static final double[][] PAWN_W_EVAL = {
             {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00},
             {0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50},
             {0.10, 0.10, 0.20, 0.30, 0.30, 0.20, 0.10, 0.10},
@@ -19,7 +19,7 @@ public class Metrics {
             {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00},
     };
 
-    private static final double[][] KNIGHT_W_EVAL = {
+    public static final double[][] KNIGHT_W_EVAL = {
             {-0.50, -0.40, -0.30, -0.30, -0.30, -0.30, -0.40, -0.50},
             {-0.40, -0.20, 0.00, 0.00, 0.00, 0.00, -0.20, -0.40},
             {-0.30, 0.00, 0.10, 0.15, 0.15, 0.10, 0.00, -0.30},
@@ -30,7 +30,7 @@ public class Metrics {
             {-0.50, -0.40, -0.30, -0.30, -0.30, -0.30, -0.40, -0.50},
     };
 
-    private static final double[][] BISHOP_W_EVAL = {
+    public static final double[][] BISHOP_W_EVAL = {
             {-0.20, -0.10, -0.10, -0.10, -0.10, -0.10, -0.10, -0.20},
             {-0.10, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, -0.10},
             {-0.10, 0.00, 0.05, 0.10, 0.10, 0.05, 0.00, -0.10},
@@ -41,7 +41,7 @@ public class Metrics {
             {-0.20, -0.10, -0.10, -0.10, -0.10, -0.10, -0.10, -0.20},
     };
 
-    private static final double[][] ROOK_W_EVAL = {
+    public static final double[][] ROOK_W_EVAL = {
             {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00},
             {0.05, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.05},
             {-0.05, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, -0.05},
@@ -52,7 +52,7 @@ public class Metrics {
             {0.00, 0.00, 0.00, 0.05, 0.05, 0.00, 0.00, 0.00},
     };
 
-    private static final double[][] QUEEN_W_EVAL = {
+    public static final double[][] QUEEN_W_EVAL = {
             {-0.20, -0.10, -0.10, -0.05, -0.05, -0.10, -0.10, -0.20},
             {-0.10, 0.00, 0.05, 0.00, 0.00, 0.00, 0.00, -0.10},
             {-0.10, 0.05, 0.05, 0.05, 0.05, 0.05, 0.00, -0.10},
@@ -63,7 +63,7 @@ public class Metrics {
             {-0.20, -0.10, -0.10, -0.05, -0.05, -0.10, -0.10, -0.20},
     };
 
-    private static final double[][] KING_W_EVAL = {
+    public static final double[][] KING_W_EVAL = {
             {-0.30, -0.40, -0.40, -0.50, -0.50, -0.40, -0.40, -0.30},
             {-0.30, -0.40, -0.40, -0.50, -0.50, -0.40, -0.40, -0.30},
             {-0.30, -0.40, -0.40, -0.50, -0.50, -0.40, -0.40, -0.30},
@@ -74,12 +74,12 @@ public class Metrics {
             {0.20, 0.30, 0.10, 0.00, 0.00, 0.10, 0.30, 0.20},
     };
 
-    private static final double[][] PAWN_B_EVAL = reverseArray(PAWN_W_EVAL);
-    private static final double[][] KNIGHT_B_EVAL = reverseArray(KNIGHT_W_EVAL);
-    private static final double[][] BISHOP_B_EVAL = reverseArray(BISHOP_W_EVAL);
-    private static final double[][] ROOK_B_EVAL = reverseArray(ROOK_W_EVAL);
-    private static final double[][] QUEEN_B_EVAL = reverseArray(QUEEN_W_EVAL);
-    private static final double[][] KING_B_EVAL = reverseArray(KING_W_EVAL);
+    public static final double[][] PAWN_B_EVAL = reverseArray(PAWN_W_EVAL);
+    public static final double[][] KNIGHT_B_EVAL = reverseArray(KNIGHT_W_EVAL);
+    public static final double[][] BISHOP_B_EVAL = reverseArray(BISHOP_W_EVAL);
+    public static final double[][] ROOK_B_EVAL = reverseArray(ROOK_W_EVAL);
+    public static final double[][] QUEEN_B_EVAL = reverseArray(QUEEN_W_EVAL);
+    public static final double[][] KING_B_EVAL = reverseArray(KING_W_EVAL);
 
     private static double[][] reverseArray(double[][] array) {
         double[][] reversedArray = new double[array.length][];

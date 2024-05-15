@@ -1,26 +1,31 @@
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ProgressPanel extends JPanel {
-    public ProgressPanel() {
+    private JLabel statusLabel;
+    private BoardPanel boardPanel;
+
+    public ProgressPanel(BoardPanel boardPanel) {
+        this.boardPanel = boardPanel;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(200, 600));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setBackground(new Color(30, 30, 30));
 
-        JLabel statusLabel = new JLabel("");
+        statusLabel = new JLabel("Evaluation: 0");
         statusLabel.setForeground(Color.WHITE);
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JProgressBar progressBar = new JProgressBar(SwingConstants.VERTICAL, 0, 100);
-        progressBar.setValue(50); // Placeholder value, update with game logic
-        progressBar.setForeground(Color.GREEN);
-        progressBar.setBackground(Color.RED);
-        progressBar.setPreferredSize(new Dimension(50, 400));
-        progressBar.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         add(statusLabel);
         add(Box.createVerticalStrut(20)); // Spacer
-        add(progressBar);
+
+        Timer timer = new Timer(300, e -> updateStatusLabel());
+        timer.start();
+    }
+
+    private void updateStatusLabel() {
+        int evaluation = boardPanel.getBoardEvaluation();
+        statusLabel.setText("Evaluation: " + evaluation);
     }
 }

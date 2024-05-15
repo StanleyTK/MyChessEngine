@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,7 +13,7 @@ public class ChessGame {
         BoardPanel boardPanel = new BoardPanel();
         frame.add(boardPanel, BorderLayout.CENTER);
 
-        ProgressPanel progressPanel = new ProgressPanel();
+        ProgressPanel progressPanel = new ProgressPanel(boardPanel); // Pass BoardPanel instance
         frame.add(progressPanel, BorderLayout.WEST);
 
         ControlPanel controlPanel = new ControlPanel(boardPanel);

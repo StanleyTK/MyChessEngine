@@ -7,7 +7,7 @@ import java.util.Stack;
 
 public class BoardPanel extends JPanel {
     private JPanel[][] boardCells;
-    private ChessPiece[][] boardState;
+    public ChessPiece[][] boardState;
     private Point selectedPiece;
     private Color originalColor;
     private boolean whiteTurn = true;
@@ -343,4 +343,8 @@ public class BoardPanel extends JPanel {
         repaint();
         moveHistory.clear();
     }
+    public int getBoardEvaluation() {
+        return Evaluator.evaluateBoard(boardState);
+    }
+
 }
