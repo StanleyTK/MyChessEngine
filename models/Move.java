@@ -24,4 +24,20 @@ public class Move {
     public String toString() {
         return toChessNotation();
     }
+
+    public int getStartRow() {
+        return startRow;
+    }
+
+    public int getEndRow() {
+        return endRow;
+    }
+
+    public int getStartCol() {
+        return startCol;
+    }
+
+    public int getEndCol() {
+        return endCol;
+    }
 }
