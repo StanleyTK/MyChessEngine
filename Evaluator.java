@@ -79,7 +79,10 @@ public class Evaluator {
         return newBoardState;
     }
 
-    public static void getBestMove(BaseBoardPanel baseBoardPanel, boolean isWhite) {
-//        ArrayList<ChessPiece [][]> allPossibleMoves = baseBoardPanel.generateAllPossibleMoves(isWhite);
+    public static int getBestMove(BaseBoardPanel baseBoardPanel, boolean isWhite) {
+        ArrayList<ChessPiece [][]> allPossibleMoves = baseBoardPanel.generateAllPossibleMoves(isWhite);
+        System.out.println("Size is about: " + allPossibleMoves.size());
+
+        return 69;
     }
 }

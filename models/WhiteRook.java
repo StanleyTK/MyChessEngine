@@ -1,5 +1,8 @@
 package models;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class WhiteRook extends ChessPiece {
     private boolean hasMoved;
 
@@ -59,4 +62,32 @@ public class WhiteRook extends ChessPiece {
         cloned.hasMoved = this.hasMoved;
         return cloned;
     }
+
+    @Override
+    public ArrayList<Point> getValidMoves(int row, int col, ChessPiece[][] boardState) {
+        ArrayList<Point> validMoves = new ArrayList<>();
+        int[] directions = {-1, 1}; // Directions for movement along rows and columns
+
+        // Check along each column and row from the current position
+        for (int d : directions) {
+            for (int r = row + d; r >= 0 && r < 8; r += d) {
+                if (boardState[r][col] != null) {
+                    if (!boardState[r][col].isBlack()) break;
+                    validMoves.add(new Point(r, col));
+                    break;
+                }
+                validMoves.add(new Point(r, col));
+            }
+            for (int c = col + d; c >= 0 && c < 8; c += d) {
+                if (boardState[row][c] != null) {
+                    if (!boardState[row][c].isBlack()) break;
+                    validMoves.add(new Point(row, c));
+                    break;
+                }
+                validMoves.add(new Point(row, c));
+            }
+        }
+        return validMoves;
+    }
+
 }

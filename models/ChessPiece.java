@@ -1,5 +1,8 @@
 package models;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public abstract class ChessPiece implements Cloneable {
     private boolean isBlack;
 
@@ -19,8 +22,11 @@ public abstract class ChessPiece implements Cloneable {
         try {
             return (ChessPiece) super.clone();
         } catch (CloneNotSupportedException e) {
-            // This should not happen since we are Cloneable
-            throw new RuntimeException("Clone not supported", e);
+            throw new RuntimeException("clone error :(", e);
         }
     }
+
+    public abstract ArrayList<Point> getValidMoves(int row, int col, ChessPiece[][] boardState);
+
+//    public abstract ArrayList<ChessPiece [][]> allPossibleMoves();
 }

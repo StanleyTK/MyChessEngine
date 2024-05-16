@@ -1,5 +1,8 @@
 package models;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class BlackQueen extends ChessPiece {
     public BlackQueen() {
         super(true);
@@ -67,5 +70,14 @@ public class BlackQueen extends ChessPiece {
     @Override
     public BlackQueen clone() {
         return (BlackQueen) super.clone();
+    }
+
+    @Override
+    public ArrayList<Point> getValidMoves(int row, int col, ChessPiece[][] boardState) {
+        ArrayList<Point> validMoves = new ArrayList<>();
+        // Combine Rook and Bishop movement capabilities
+        validMoves.addAll(new BlackRook().getValidMoves(row, col, boardState));
+        validMoves.addAll(new BlackBishop().getValidMoves(row, col, boardState));
+        return validMoves;
     }
 }

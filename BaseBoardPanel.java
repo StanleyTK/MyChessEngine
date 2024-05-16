@@ -4,6 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import models.*;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 public abstract class BaseBoardPanel extends JPanel {
@@ -266,5 +267,35 @@ public abstract class BaseBoardPanel extends JPanel {
         updateBoard();
     }
 
+
+    public ArrayList<ChessPiece[][]> generateAllPossibleMoves(boolean isWhite) {
+        ArrayList<ChessPiece[][]> allPossibleMoves = new ArrayList<>();
+
+        // Loop through all pieces on the board
+        for (int row = 0; row < boardState.length; row++) {
+            for (int col = 0; col < boardState[row].length; col++) {
+                ChessPiece piece = boardState[row][col];
+                if (piece != null && piece.isBlack() == !isWhite) {
+                    ArrayList<Point> validMoves = piece.getValidMoves(row, col, boardState);
+                    for (Point move : validMoves) {
+                        ChessPiece[][] newBoardState = Evaluator.copyBoardState(boardState);
+                        newBoardState[move.x][move.y] = piece;
+                        newBoardState[row][col] = null;
+
+                        // TODO remove if not valid (checking)
+
+                        // TODO if king castles, move the rook
+
+                        // TODO if promotion, switch the piece to knight, rook, queen, and bishop, add all possibilities
+
+
+                        allPossibleMoves.add(newBoardState);
+                    }
+                }
+            }
+        }
+
+        return allPossibleMoves;
+    }
 
 }

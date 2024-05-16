@@ -1,5 +1,8 @@
 package models;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class BlackRook extends ChessPiece {
     private boolean hasMoved;
 
@@ -59,4 +62,36 @@ public class BlackRook extends ChessPiece {
         cloned.hasMoved = this.hasMoved;
         return cloned;
     }
+
+    @Override
+    public ArrayList<Point> getValidMoves(int row, int col, ChessPiece[][] boardState) {
+        ArrayList<Point> validMoves = new ArrayList<>();
+        int[] directions = {-1, 1};
+        // Horizontal moves
+        for (int dir : directions) {
+            for (int c = col + dir; c >= 0 && c < 8; c += dir) {
+                if (boardState[row][c] == null) {
+                    validMoves.add(new Point(row, c));
+                } else {
+                    if (boardState[row][c].isBlack() != isBlack()) {
+                        validMoves.add(new Point(row, c));
+                    }
+                    break;
+                }
+            }
+            // Vertical moves
+            for (int r = row + dir; r >= 0 && r < 8; r += dir) {
+                if (boardState[r][col] == null) {
+                    validMoves.add(new Point(r, col));
+                } else {
+                    if (boardState[r][col].isBlack() != isBlack()) {
+                        validMoves.add(new Point(r, col));
+                    }
+                    break;
+                }
+            }
+        }
+        return validMoves;
+    }
+
 }

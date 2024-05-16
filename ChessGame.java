@@ -50,7 +50,6 @@ public class ChessGame {
                 frame.add(playerVAIPanel, BorderLayout.CENTER);
                 break;
             case AI_VS_AI:
-                // AI vs AI not implemented yet, defaulting to Player vs Player for now
                 playerVPlayerPanel = new PlayerVPlayerPanel();
                 progressPanel = new ProgressPanel(playerVPlayerPanel);
                 controlPanel = new ControlPanel(playerVPlayerPanel);
@@ -74,13 +73,11 @@ public class ChessGame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            // Capture memory and CPU usage before running the application
             long beforeUsedMemory = getUsedMemory();
             long beforeCPUTime = getProcessCpuTime();
 
             new ChessGame();
 
-            // Add a shutdown hook to capture memory and CPU usage after the application exits
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 long afterUsedMemory = getUsedMemory();
                 long afterCPUTime = getProcessCpuTime();

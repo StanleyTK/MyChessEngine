@@ -11,8 +11,8 @@ public class ModePanel extends JPanel {
 
         // Title
         JLabel titleLabel = new JLabel("MyChessEngine");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));  // Updated font
-        titleLabel.setForeground(new Color(255, 255, 255));  // Pure white for better visibility
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(255, 255, 255));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // About section

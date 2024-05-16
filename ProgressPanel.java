@@ -24,7 +24,7 @@ public class ProgressPanel extends JPanel {
         bestMoveLabel = createStyledLabel("Best Move: ", labelFont, labelColor);
         add(bestMoveLabel);
 
-        Timer timer = new Timer(300, e -> updateStatusLabel());
+        Timer timer = new Timer(1000, e -> updateStatusLabel());
         timer.start();
 
     }
@@ -40,7 +40,8 @@ public class ProgressPanel extends JPanel {
     private void updateStatusLabel() {
         int evaluation = baseBoardPanel.getBoardEvaluation();
         statusLabel.setText("Evaluation: " + evaluation);
+        int val = Evaluator.getBestMove(baseBoardPanel, baseBoardPanel.whiteTurn);
 
-        bestMoveLabel.setText("Best Move: ");
+        bestMoveLabel.setText("Best Move: " + val);
     }
 }

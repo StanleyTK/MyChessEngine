@@ -1,5 +1,8 @@
 package models;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class WhiteQueen extends ChessPiece {
     public WhiteQueen() {
         super(false);
@@ -68,4 +71,14 @@ public class WhiteQueen extends ChessPiece {
     public WhiteQueen clone() {
         return (WhiteQueen) super.clone();
     }
+
+    @Override
+    public ArrayList<Point> getValidMoves(int row, int col, ChessPiece[][] boardState) {
+        ArrayList<Point> validMoves = new ArrayList<>();
+        // Combine Rook and Bishop movement capabilities
+        validMoves.addAll(new WhiteRook().getValidMoves(row, col, boardState));
+        validMoves.addAll(new WhiteBishop().getValidMoves(row, col, boardState));
+        return validMoves;
+    }
+
 }
