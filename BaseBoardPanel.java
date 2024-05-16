@@ -98,20 +98,20 @@ public abstract class BaseBoardPanel extends JPanel {
         }
     }
 
-    protected void movePiece(int startRow, int startCol, int endRow, int endCol, boolean whiteTurn) {
-        ChessPiece piece = boardState[startRow][startCol];
+    protected void movePiece(ChessPiece[][] board, int startRow, int startCol, int endRow, int endCol, boolean whiteTurn) {
+        ChessPiece piece = board[startRow][startCol];
 
         // for castling
         moveSpecialPiece(startRow, startCol);
 
         // en passant logic
         handleEnPassant(startRow, startCol, endRow, endCol, whiteTurn, piece);
-        boardState[endRow][endCol] = piece;
-        boardState[startRow][startCol] = null;
+        board[endRow][endCol] = piece;
+        board[startRow][startCol] = null;
 
         // handle promotion if pawn gets to the end rank
-        if (isPromotion(endRow, endCol)) {
-            promotePawn(endRow, endCol);
+        if (isPromotion(board, endRow, endCol)) {
+            promotePawn(board, endRow, endCol);
         }
         updateBoard();
     }
@@ -162,12 +162,12 @@ public abstract class BaseBoardPanel extends JPanel {
         }
     }
 
-    protected boolean isPromotion(int row, int col) {
-        return (boardState[row][col] instanceof WhitePawn && row == 0) ||
-                (boardState[row][col] instanceof BlackPawn && row == 7);
+    protected boolean isPromotion(ChessPiece[][] board, int row, int col) {
+        return (board[row][col] instanceof WhitePawn && row == 0) ||
+                (board[row][col] instanceof BlackPawn && row == 7);
     }
 
-    protected void promotePawn(int row, int col) {
+    protected void promotePawn(ChessPiece[][] board, int row, int col) {
         String[] options = {"Queen", "Rook", "Bishop", "Knight"};
         int choice = JOptionPane.showOptionDialog(this,
                 "Promote pawn to:",
@@ -180,19 +180,19 @@ public abstract class BaseBoardPanel extends JPanel {
 
         switch (choice) {
             case 0:
-                boardState[row][col] = whiteTurn ? new WhiteQueen() : new BlackQueen();
+                board[row][col] = whiteTurn ? new WhiteQueen() : new BlackQueen();
                 break;
             case 1:
-                boardState[row][col] = whiteTurn ? new WhiteRook() : new BlackRook();
+                board[row][col] = whiteTurn ? new WhiteRook() : new BlackRook();
                 break;
             case 2:
-                boardState[row][col] = whiteTurn ? new WhiteBishop() : new BlackBishop();
+                board[row][col] = whiteTurn ? new WhiteBishop() : new BlackBishop();
                 break;
             case 3:
-                boardState[row][col] = whiteTurn ? new WhiteKnight() : new BlackKnight();
+                board[row][col] = whiteTurn ? new WhiteKnight() : new BlackKnight();
                 break;
             default:
-                boardState[row][col] = whiteTurn ? new WhiteQueen() : new BlackQueen();
+                board[row][col] = whiteTurn ? new WhiteQueen() : new BlackQueen();
                 break;
         }
         updateBoard();
@@ -268,21 +268,24 @@ public abstract class BaseBoardPanel extends JPanel {
     }
 
 
-    public ArrayList<ChessPiece[][]> generateAllPossibleMoves(boolean isWhite) {
+    public ArrayList<ChessPiece[][]> generateAllPossibleMoves(boolean isWhiteTurn) {
         ArrayList<ChessPiece[][]> allPossibleMoves = new ArrayList<>();
 
-        // Loop through all pieces on the board
         for (int row = 0; row < boardState.length; row++) {
             for (int col = 0; col < boardState[row].length; col++) {
                 ChessPiece piece = boardState[row][col];
-                if (piece != null && piece.isBlack() == !isWhite) {
+                if (piece != null && piece.isBlack() == !isWhiteTurn) {
                     ArrayList<Point> validMoves = piece.getValidMoves(row, col, boardState);
                     for (Point move : validMoves) {
                         ChessPiece[][] newBoardState = Evaluator.copyBoardState(boardState);
+
+                        // dont add if not valid (checking)
+                        if (!Utils.isMoveLegal(newBoardState, whiteTurn, row, col, move.x, move.y)) {
+                            continue;
+                        }
+
                         newBoardState[move.x][move.y] = piece;
                         newBoardState[row][col] = null;
-
-                        // TODO remove if not valid (checking)
 
                         // TODO if king castles, move the rook
 

@@ -73,7 +73,9 @@ public class Evaluator {
         for (int i = 0; i < boardState.length; i++) {
             newBoardState[i] = new ChessPiece[boardState[i].length];
             for (int j = 0; j < boardState[i].length; j++) {
-                newBoardState[i][j] = boardState[i][j];
+                if (boardState[i][j] != null) {
+                    newBoardState[i][j] = boardState[i][j].clone();
+                }
             }
         }
         return newBoardState;

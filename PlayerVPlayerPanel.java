@@ -19,7 +19,7 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
                     Utils.blinkRed(boardCells, selectedPiece.x, selectedPiece.y);
                 } else {
                     moveHistory.push(new BoardState(boardState, whiteTurn));
-                    movePiece(selectedPiece.x, selectedPiece.y, row, col, whiteTurn);
+                    movePiece(boardState, selectedPiece.x, selectedPiece.y, row, col, whiteTurn);
 
                     if (Utils.isCheck(boardState, whiteTurn)) {
                         if (Utils.isCheckmate(boardState, whiteTurn)) {
