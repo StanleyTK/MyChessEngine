@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import models.*;
+
+import java.util.ArrayList;
 import java.util.Stack;
 
 public abstract class BaseBoardPanel extends JPanel {
@@ -19,6 +21,7 @@ public abstract class BaseBoardPanel extends JPanel {
     protected Point lastMoveStart = null;
     protected Point lastMoveEnd = null;
 
+
     public BaseBoardPanel() {
         setLayout(new GridLayout(8, 8));
         boardCells = new JPanel[8][8];
@@ -26,6 +29,7 @@ public abstract class BaseBoardPanel extends JPanel {
         initializeBoard();
         setPreferredSize(new Dimension(600, 600));
     }
+
 
     private void initializeBoard() {
         for (int row = 0; row < 8; row++) {
@@ -288,6 +292,30 @@ public abstract class BaseBoardPanel extends JPanel {
             updateBoard();
         }
     }
+//
+//    public ArrayList<ChessPiece[][]> generateAllPossibleMoves(ChessPiece[][] board, boolean isWhite) {
+//        ArrayList<ChessPiece[][]> allPossibleMoves = new ArrayList<>();
+//        for (int i = 0; i < board.length; i++) {
+//            for (int j = 0; j < board.length; j++) {
+//                ChessPiece piece = board[i][j];
+//                if (piece != null && piece.isBlack() != isWhite) {
+//                    for (int row = 0; row < 8; row++) {
+//                        for (int col = 0; col < 8; col++) {
+//                            if (piece.isValidMove(i, j, row, col, board)) {
+//                                ChessPiece[][] newBoardState = Evaluator.copyBoardState(board);
+//                                newBoardState[row][col] = newBoardState[i][j];
+//                                newBoardState[i][j] = null;
+//                                allPossibleMoves.add(newBoardState);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        return allPossibleMoves;
+//    }
 
     public void handleResetBoard() {
         removeAll();

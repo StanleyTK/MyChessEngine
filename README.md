@@ -5,7 +5,7 @@ MyChessEngine is my Summer 2024 project designed to deepen understanding of ches
 
 To run the project, start the ChessGame.java module.
 
-### Features
+### Current Features
 * Full Chess Functionality: Supports all standard chess rules, including castling, en passant, and pawn promotion.
 * Game Management: Allows resetting the board and maintaining move histories to navigate back to previous moves.
 * Evaluation System: Implements a raw metrics and evaluation system to lay the groundwork for future algorithm enhancements.
@@ -13,9 +13,8 @@ To run the project, start the ChessGame.java module.
   
 ### Future Work
 * MinMax Algorithm: Integrate the MinMax algorithm for enhanced move decision-making.
-* Alpha-Beta Pruning: Implement alpha-beta pruning to optimize the MinMax algorithm.
-* Machine Learning: Explore machine learning techniques to improve the evaluation function.
-
+* Alpha-Beta Pruning: Implement alpha-beta pruning to optimize the MinMax algorithm. 
+* Player vs AI and AI vs AI: Develop functionality to support both player versus AI and AI versus AI gameplay modes.
 ### Contact
 * Email: stanleykim2003@gmail.com
 * Author: Stanley Kim

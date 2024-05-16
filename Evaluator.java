@@ -1,5 +1,6 @@
-package models;
+import models.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Evaluator {
@@ -67,7 +68,7 @@ public class Evaluator {
         return (int) (pieceValue + (pieceValue * positionValue));
     }
 
-    private static ChessPiece[][] copyBoardState(ChessPiece[][] boardState) {
+    public static ChessPiece[][] copyBoardState(ChessPiece[][] boardState) {
         ChessPiece[][] newBoardState = new ChessPiece[boardState.length][];
         for (int i = 0; i < boardState.length; i++) {
             newBoardState[i] = new ChessPiece[boardState[i].length];
@@ -78,35 +79,7 @@ public class Evaluator {
         return newBoardState;
     }
 
-    public static Move getBestMove(ChessPiece[][] boardState, boolean isWhite) {
-        Move bestMove = null;
-        int bestEvaluation = isWhite ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-
-        for (int startRow = 0; startRow < boardState.length; startRow++) {
-            for (int startCol = 0; startCol < boardState[startRow].length; startCol++) {
-                ChessPiece piece = boardState[startRow][startCol];
-                if (piece != null && piece.isBlack() != isWhite) {
-                    for (int endRow = 0; endRow < boardState.length; endRow++) {
-                        for (int endCol = 0; endCol < boardState[endRow].length; endCol++) {
-                            if (piece.isValidMove(startRow, startCol, endRow, endCol, boardState)) {
-                                ChessPiece[][] newBoardState = copyBoardState(boardState);
-                                newBoardState[endRow][endCol] = newBoardState[startRow][startCol];
-                                newBoardState[startRow][startCol] = null;
-
-                                int evaluation = evaluateBoard(newBoardState);
-                                if (isWhite && evaluation > bestEvaluation) {
-                                    bestEvaluation = evaluation;
-                                    bestMove = new Move(startRow, startCol, endRow, endCol);
-                                } else if (!isWhite && evaluation < bestEvaluation) {
-                                    bestEvaluation = evaluation;
-                                    bestMove = new Move(startRow, startCol, endRow, endCol);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return bestMove;
+    public static void getBestMove(BaseBoardPanel baseBoardPanel, boolean isWhite) {
+//        ArrayList<ChessPiece [][]> allPossibleMoves = baseBoardPanel.generateAllPossibleMoves(isWhite);
     }
 }

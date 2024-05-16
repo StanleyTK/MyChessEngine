@@ -12,6 +12,7 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
                 boardCells[row][col].setBackground(Color.YELLOW);
             }
         } else {
+
             boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
             if (isCastling(selectedPiece.x, selectedPiece.y, row, col)) {
                 moveHistory.push(new BoardState(boardState, whiteTurn, whiteKingMoved, blackKingMoved, whiteRookMoved, blackRookMoved, lastMoveStart, lastMoveEnd));
@@ -42,4 +43,5 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
             selectedPiece = null;
         }
     }
+
 }

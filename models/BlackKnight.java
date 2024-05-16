@@ -1,5 +1,7 @@
 package models;
 
+import java.util.ArrayList;
+
 public class BlackKnight extends ChessPiece {
     public BlackKnight() {
         super(true);
@@ -20,4 +22,5 @@ public class BlackKnight extends ChessPiece {
         }
         return false;
     }
+
 }
