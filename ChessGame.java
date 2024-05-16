@@ -13,6 +13,7 @@ public class ChessGame {
     private JFrame frame;
     private static ChessGame instance;
     private PlayerVPlayerPanel playerVPlayerPanel;
+    private PlayerVAIPanel playerVAIPanel;
 
 
     public ChessGame() {
@@ -30,26 +31,38 @@ public class ChessGame {
     public static ChessGame getInstance() {
         return instance;
     }
-
     public void setGameMode(GameMode gameMode) {
         frame.getContentPane().removeAll();
-        playerVPlayerPanel = new PlayerVPlayerPanel();
+        ProgressPanel progressPanel = null;
+        ControlPanel controlPanel = null;
 
-        ProgressPanel progressPanel = new ProgressPanel(playerVPlayerPanel);
-        ControlPanel controlPanel = new ControlPanel(playerVPlayerPanel);
-        if (gameMode == GameMode.HUMAN_VS_HUMAN) {
-            frame.add(playerVPlayerPanel, BorderLayout.CENTER);
+        switch (gameMode) {
+            case HUMAN_VS_HUMAN:
+                playerVPlayerPanel = new PlayerVPlayerPanel();
+                progressPanel = new ProgressPanel(playerVPlayerPanel);
+                controlPanel = new ControlPanel(playerVPlayerPanel);
+                frame.add(playerVPlayerPanel, BorderLayout.CENTER);
+                break;
+            case HUMAN_VS_AI:
+                playerVAIPanel = new PlayerVAIPanel();
+                progressPanel = new ProgressPanel(playerVAIPanel);
+                controlPanel = new ControlPanel(playerVAIPanel);
+                frame.add(playerVAIPanel, BorderLayout.CENTER);
+                break;
+            case AI_VS_AI:
+                // AI vs AI not implemented yet, defaulting to Player vs Player for now
+                playerVPlayerPanel = new PlayerVPlayerPanel();
+                progressPanel = new ProgressPanel(playerVPlayerPanel);
+                controlPanel = new ControlPanel(playerVPlayerPanel);
+                frame.add(playerVPlayerPanel, BorderLayout.CENTER);
+                break;
         }
-        else if (gameMode == GameMode.HUMAN_VS_AI) {
-            frame.add(playerVPlayerPanel, BorderLayout.CENTER);
-        } else {
-            frame.add(playerVPlayerPanel, BorderLayout.CENTER);
-        }
+
         frame.add(progressPanel, BorderLayout.WEST);
         frame.add(controlPanel, BorderLayout.EAST);
 
-        frame.revalidate();
-        frame.repaint();
+        frame.revalidate(); // Revalidate to include new components properly
+        frame.repaint();    // Repaint to show the updated UI
     }
 
     public void showModePanel() {
