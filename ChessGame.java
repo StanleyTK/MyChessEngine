@@ -61,8 +61,8 @@ public class ChessGame {
         frame.add(progressPanel, BorderLayout.WEST);
         frame.add(controlPanel, BorderLayout.EAST);
 
-        frame.revalidate(); // Revalidate to include new components properly
-        frame.repaint();    // Repaint to show the updated UI
+        frame.revalidate();
+        frame.repaint();
     }
 
     public void showModePanel() {

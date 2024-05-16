@@ -22,4 +22,9 @@ public class BlackPawn extends ChessPiece {
         }
         return false;
     }
+
+    @Override
+    public BlackPawn clone() {
+        return (BlackPawn) super.clone();
+    }
 }

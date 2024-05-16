@@ -20,4 +20,9 @@ public class WhiteKnight extends ChessPiece {
         return false;
     }
 
+    @Override
+    public WhiteKnight clone() {
+        return (WhiteKnight) super.clone();
+    }
+
 }

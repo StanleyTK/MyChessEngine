@@ -22,5 +22,9 @@ public class BlackKnight extends ChessPiece {
         }
         return false;
     }
+    @Override
+    public BlackKnight clone() {
+        return (BlackKnight) super.clone();
+    }
 
 }

@@ -4,7 +4,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import models.*;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 public abstract class BaseBoardPanel extends JPanel {
@@ -13,13 +12,8 @@ public abstract class BaseBoardPanel extends JPanel {
     protected Point selectedPiece;
     protected Color originalColor;
     protected boolean whiteTurn = true;
-    protected boolean whiteKingMoved = false;
-    protected boolean blackKingMoved = false;
-    protected boolean[] whiteRookMoved = {false, false};
-    protected boolean[] blackRookMoved = {false, false};
     protected Stack<BoardState> moveHistory = new Stack<>();
-    protected Point lastMoveStart = null;
-    protected Point lastMoveEnd = null;
+
 
 
     public BaseBoardPanel() {
@@ -30,6 +24,7 @@ public abstract class BaseBoardPanel extends JPanel {
         setPreferredSize(new Dimension(600, 600));
     }
 
+    protected abstract void handleCellClick(int row, int col);
 
     private void initializeBoard() {
         for (int row = 0; row < 8; row++) {
@@ -54,7 +49,6 @@ public abstract class BaseBoardPanel extends JPanel {
         }
     }
 
-    protected abstract void handleCellClick(int row, int col);
 
     private void setInitialPiece(int row, int col) {
         if (row == 1) {
@@ -104,143 +98,27 @@ public abstract class BaseBoardPanel extends JPanel {
         }
     }
 
-    protected boolean isEnPassant(int startX, int startY, int endX, int endY) {
-        if (boardState[startX][startY] instanceof WhitePawn && startX == 3 && endX == 2) {
-            return lastMoveEnd != null && lastMoveEnd.x == 3 && lastMoveEnd.y == endY &&
-                    boardState[lastMoveEnd.x][lastMoveEnd.y] instanceof BlackPawn &&
-                    lastMoveStart.x == 1 && lastMoveStart.y == endY;
-        } else if (boardState[startX][startY] instanceof BlackPawn && startX == 4 && endX == 5) {
-            return lastMoveEnd != null && lastMoveEnd.x == 4 && lastMoveEnd.y == endY &&
-                    boardState[lastMoveEnd.x][lastMoveEnd.y] instanceof WhitePawn &&
-                    lastMoveStart.x == 6 && lastMoveStart.y == endY;
-        }
-        return false;
-    }
-
-    protected void handleEnPassant(int startX, int startY, int endX, int endY) {
-        boardState[endX][endY] = boardState[startX][startY];
-        boardState[startX][startY] = null;
-
-        if (endX == 2) {
-            boardState[3][endY] = null; // Capturing black pawn
-        } else if (endX == 5) {
-            boardState[4][endY] = null; // Capturing white pawn
-        }
-        updateBoard();
-        whiteTurn = !whiteTurn;
-    }
-
-    protected boolean isCastling(int x, int y, int row, int col) {
-        ChessPiece piece = boardState[x][y];
-        if (piece instanceof WhiteKing && !whiteKingMoved && x == 7 && y == 4) {
-            // White kingside castling
-            if (col == 6 && !whiteRookMoved[1] && boardState[7][5] == null && boardState[7][6] == null &&
-                    isCastlingValid(x, y, 7, 5) && isCastlingValid(x, y, 7, 6)) {
-                return true;
-            }
-            // White queenside castling
-            if (col == 2 && !whiteRookMoved[0] && boardState[7][1] == null && boardState[7][2] == null && boardState[7][3] == null &&
-                    isCastlingValid(x, y, 7, 3) && isCastlingValid(x, y, 7, 2)) {
-                return true;
-            }
-        }
-        if (piece instanceof BlackKing && !blackKingMoved && x == 0 && y == 4) {
-            // Black kingside castling
-            if (col == 6 && !blackRookMoved[1] && boardState[0][5] == null && boardState[0][6] == null &&
-                    isCastlingValid(x, y, 0, 5) && isCastlingValid(x, y, 0, 6)) {
-                return true;
-            }
-            // Black queenside castling
-            if (col == 2 && !blackRookMoved[0] && boardState[0][1] == null && boardState[0][2] == null && boardState[0][3] == null &&
-                    isCastlingValid(x, y, 0, 3) && isCastlingValid(x, y, 0, 2)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected void handleCastling(int x, int y, int row, int col) {
-        if (row == 7 && col == 6) {
-            // White kingside castling
-            boardState[7][6] = boardState[7][4];
-            boardState[7][4] = null;
-            boardState[7][5] = boardState[7][7];
-            boardState[7][7] = null;
-            whiteKingMoved = true;
-            whiteRookMoved[1] = true;
-        } else if (row == 7 && col == 2) {
-            // White queenside castling
-            boardState[7][2] = boardState[7][4];
-            boardState[7][4] = null;
-            boardState[7][3] = boardState[7][0];
-            boardState[7][0] = null;
-            whiteKingMoved = true;
-            whiteRookMoved[0] = true;
-        } else if (row == 0 && col == 6) {
-            // Black kingside castling
-            boardState[0][6] = boardState[0][4];
-            boardState[0][4] = null;
-            boardState[0][5] = boardState[0][7];
-            boardState[0][7] = null;
-            blackKingMoved = true;
-            blackRookMoved[1] = true;
-        } else if (row == 0 && col == 2) {
-            // Black queenside castling
-            boardState[0][2] = boardState[0][4];
-            boardState[0][4] = null;
-            boardState[0][3] = boardState[0][0];
-            boardState[0][0] = null;
-            blackKingMoved = true;
-            blackRookMoved[0] = true;
-        }
-        updateBoard();
-        whiteTurn = !whiteTurn;
-        selectedPiece = null;
-    }
-
-    protected boolean isCastlingValid(int startX, int startY, int endX, int endY) {
-        // Temporarily make the move
-        if (Utils.isCheck(boardState, !whiteTurn)) {
-            return false;
-        }
-        ChessPiece temp = boardState[endX][endY];
-        boardState[endX][endY] = boardState[startX][startY];
-        boardState[startX][startY] = null;
-
-        boolean isValid = !Utils.isCheck(boardState, !whiteTurn);
-
-        // Revert the move
-        boardState[startX][startY] = boardState[endX][endY];
-        boardState[endX][endY] = temp;
-
-        return isValid;
-    }
-
-    protected void movePiece(int startRow, int startCol, int endRow, int endCol, ChessPiece chessPiece) {
-        lastMoveStart = new Point(startRow, startCol);
-        lastMoveEnd = new Point(endRow, endCol);
-
-        if (boardState[startRow][startCol] instanceof WhiteKing) {
-            whiteKingMoved = true;
-        } else if (boardState[startRow][startCol] instanceof BlackKing) {
-            blackKingMoved = true;
-        } else if (boardState[startRow][startCol] instanceof WhiteRook) {
-            if (startRow == 7 && startCol == 0) {
-                whiteRookMoved[0] = true;
-            } else if (startRow == 7 && startCol == 7) {
-                whiteRookMoved[1] = true;
-            }
-        } else if (boardState[startRow][startCol] instanceof BlackRook) {
-            if (startRow == 0 && startCol == 0) {
-                blackRookMoved[0] = true;
-            } else if (startRow == 0 && startCol == 7) {
-                blackRookMoved[1] = true;
-            }
-        }
+    protected void movePiece(int startRow, int startCol, int endRow, int endCol) {
+        moveSpecialPiece(startRow, startCol);
         boardState[endRow][endCol] = boardState[startRow][startCol];
         boardState[startRow][startCol] = null;
         updateBoard();
     }
+
+    private void moveSpecialPiece(int startRow, int startCol) {
+        ChessPiece piece = boardState[startRow][startCol];
+
+        if (piece instanceof WhiteKing) {
+            ((WhiteKing) piece).setWhiteKingMoved(true);
+        } else if (piece instanceof BlackKing) {
+            ((BlackKing) piece).setBlackKingMoved(true);
+        } else if (piece instanceof WhiteRook) {
+            ((WhiteRook) piece).setMoved(true);
+        } else if (piece instanceof BlackRook) {
+            ((BlackRook) piece).setMoved(true);
+        }
+    }
+
 
     protected boolean isPromotion(int row, int col) {
         return (boardState[row][col] instanceof WhitePawn && row == 0) ||
@@ -282,40 +160,12 @@ public abstract class BaseBoardPanel extends JPanel {
         if (!moveHistory.isEmpty()) {
             BoardState previousState = moveHistory.pop();
             this.boardState = previousState.getBoardState();
+
             this.whiteTurn = previousState.isWhiteTurn();
-            this.whiteKingMoved = previousState.isWhiteKingMoved();
-            this.blackKingMoved = previousState.isBlackKingMoved();
-            this.whiteRookMoved = previousState.getWhiteRookMoved();
-            this.blackRookMoved = previousState.getBlackRookMoved();
-            this.lastMoveStart = previousState.getLastMoveStart();
-            this.lastMoveEnd = previousState.getLastMoveEnd();
             updateBoard();
         }
     }
-//
-//    public ArrayList<ChessPiece[][]> generateAllPossibleMoves(ChessPiece[][] board, boolean isWhite) {
-//        ArrayList<ChessPiece[][]> allPossibleMoves = new ArrayList<>();
-//        for (int i = 0; i < board.length; i++) {
-//            for (int j = 0; j < board.length; j++) {
-//                ChessPiece piece = board[i][j];
-//                if (piece != null && piece.isBlack() != isWhite) {
-//                    for (int row = 0; row < 8; row++) {
-//                        for (int col = 0; col < 8; col++) {
-//                            if (piece.isValidMove(i, j, row, col, board)) {
-//                                ChessPiece[][] newBoardState = Evaluator.copyBoardState(board);
-//                                newBoardState[row][col] = newBoardState[i][j];
-//                                newBoardState[i][j] = null;
-//                                allPossibleMoves.add(newBoardState);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//        }
-//
-//        return allPossibleMoves;
-//    }
+
 
     public void handleResetBoard() {
         removeAll();
@@ -334,4 +184,41 @@ public abstract class BaseBoardPanel extends JPanel {
     public ChessPiece[][] getBoardState() {
         return boardState;
     }
+
+
+
+    void handleCastling(int startRow, int startCol, int endRow, int endCol) {
+        if (endCol == 2) { // Queenside castling
+            boardState[startRow][endCol] = boardState[startRow][startCol]; // Move king
+            boardState[startRow][startCol] = null;
+            if (boardState[startRow][endCol] instanceof WhiteKing) {
+                ((WhiteKing) boardState[startRow][endCol]).setWhiteKingMoved(true);
+                boardState[startRow][3] = boardState[startRow][0]; // Move rook
+                ((WhiteRook) boardState[startRow][3]).setMoved(true);
+                boardState[startRow][0] = null;
+            } else if (boardState[startRow][endCol] instanceof BlackKing) {
+                ((BlackKing) boardState[startRow][endCol]).setBlackKingMoved(true);
+                boardState[startRow][3] = boardState[startRow][0]; // Move rook
+                ((BlackRook) boardState[startRow][3]).setMoved(true);
+                boardState[startRow][0] = null;
+            }
+        } else if (endCol == 6) { // Kingside castling
+            boardState[startRow][endCol] = boardState[startRow][startCol]; // Move king
+            boardState[startRow][startCol] = null;
+            if (boardState[startRow][endCol] instanceof WhiteKing) {
+                ((WhiteKing) boardState[startRow][endCol]).setWhiteKingMoved(true);
+                boardState[startRow][5] = boardState[startRow][7]; // Move rook
+                ((WhiteRook) boardState[startRow][5]).setMoved(true);
+                boardState[startRow][7] = null;
+            } else if (boardState[startRow][endCol] instanceof BlackKing) {
+                ((BlackKing) boardState[startRow][endCol]).setBlackKingMoved(true);
+                boardState[startRow][5] = boardState[startRow][7]; // Move rook
+                ((BlackRook) boardState[startRow][5]).setMoved(true);
+                boardState[startRow][7] = null;
+            }
+        }
+        updateBoard();
+        whiteTurn = !whiteTurn;
+    }
+
 }

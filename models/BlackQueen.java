@@ -63,4 +63,9 @@ public class BlackQueen extends ChessPiece {
 
         return false;
     }
+
+    @Override
+    public BlackQueen clone() {
+        return (BlackQueen) super.clone();
+    }
 }

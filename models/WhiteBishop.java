@@ -33,4 +33,9 @@ public class WhiteBishop extends ChessPiece {
         }
         return boardState[endRow][endCol] == null || boardState[endRow][endCol].isBlack();
     }
+
+    @Override
+    public WhiteBishop clone() {
+        return (WhiteBishop) super.clone();
+    }
 }

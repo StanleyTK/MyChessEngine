@@ -1,8 +1,10 @@
 package models;
 
 public class WhitePawn extends ChessPiece {
+    boolean lastMoved;
     public WhitePawn() {
         super(false);
+        lastMoved = false;
     }
 
     @Override
@@ -21,5 +23,10 @@ public class WhitePawn extends ChessPiece {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public WhitePawn clone() {
+        return (WhitePawn) super.clone();
     }
 }

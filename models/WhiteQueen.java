@@ -63,4 +63,9 @@ public class WhiteQueen extends ChessPiece {
 
         return false;
     }
+
+    @Override
+    public WhiteQueen clone() {
+        return (WhiteQueen) super.clone();
+    }
 }

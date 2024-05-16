@@ -1,8 +1,19 @@
 package models;
 
 public class WhiteRook extends ChessPiece {
+    private boolean hasMoved;
+
     public WhiteRook() {
         super(false);
+        this.hasMoved = false;
+    }
+
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    public void setMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
 
     @Override
@@ -40,7 +51,12 @@ public class WhiteRook extends ChessPiece {
             }
             return boardState[endRow][endCol] == null || boardState[endRow][endCol].isBlack();
         }
+    }
 
-
+    @Override
+    public WhiteRook clone() {
+        WhiteRook cloned = (WhiteRook) super.clone();
+        cloned.hasMoved = this.hasMoved;
+        return cloned;
     }
 }

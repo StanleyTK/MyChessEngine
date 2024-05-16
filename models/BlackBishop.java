@@ -41,4 +41,9 @@ public class BlackBishop extends ChessPiece {
 
         return boardState[endRow][endCol] == null || !boardState[endRow][endCol].isBlack();
     }
+
+    @Override
+    public BlackBishop clone() {
+        return (BlackBishop) super.clone();
+    }
 }
