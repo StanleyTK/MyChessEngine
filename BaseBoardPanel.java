@@ -98,12 +98,55 @@ public abstract class BaseBoardPanel extends JPanel {
         }
     }
 
-    protected void movePiece(int startRow, int startCol, int endRow, int endCol) {
+    protected void movePiece(int startRow, int startCol, int endRow, int endCol, boolean whiteTurn) {
+        ChessPiece piece = boardState[startRow][startCol];
+
+        // for castling
         moveSpecialPiece(startRow, startCol);
-        boardState[endRow][endCol] = boardState[startRow][startCol];
+
+        // en passant logic
+        handleEnPassant(startRow, startCol, endRow, endCol, whiteTurn, piece);
+        boardState[endRow][endCol] = piece;
         boardState[startRow][startCol] = null;
+
+        // handle promotion if pawn gets to the end rank
+        if (isPromotion(endRow, endCol)) {
+            promotePawn(endRow, endCol);
+        }
         updateBoard();
     }
+
+    protected void handleEnPassant(int startRow, int startCol, int endRow, int endCol, boolean whiteTurn, ChessPiece piece) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (boardState[row][col] instanceof WhitePawn && whiteTurn) {
+                    ((WhitePawn) boardState[row][col]).setLastMoved(false);
+                }
+                else if (boardState[row][col] instanceof BlackPawn && !whiteTurn) {
+                    ((BlackPawn) boardState[row][col]).setLastMoved(false);
+                }
+            }
+        }
+        if (piece instanceof WhitePawn && Math.abs(startRow - endRow) == 2) {
+            ((WhitePawn) piece).setLastMoved(true);
+        }
+        else if (piece instanceof BlackPawn && Math.abs(startRow - endRow) == 2) {
+            ((BlackPawn) piece).setLastMoved(true);
+        }
+
+        if (piece instanceof WhitePawn && Math.abs(startRow - endRow) == 1 &&
+                Math.abs(startCol - endCol) == 1 && boardState[endRow][endCol] == null
+                && boardState[startRow][endCol] instanceof BlackPawn) {
+            boardState[startRow][endCol] = null;
+        }
+        else if (piece instanceof BlackPawn && Math.abs(startRow - endRow) == 1 &&
+                Math.abs(startCol - endCol) == 1 && boardState[endRow][endCol] == null
+                && boardState[startRow][endCol] instanceof WhitePawn) {
+            boardState[startRow][endCol] = null;
+        }
+
+    }
+
 
     private void moveSpecialPiece(int startRow, int startCol) {
         ChessPiece piece = boardState[startRow][startCol];
@@ -118,7 +161,6 @@ public abstract class BaseBoardPanel extends JPanel {
             ((BlackRook) piece).setMoved(true);
         }
     }
-
 
     protected boolean isPromotion(int row, int col) {
         return (boardState[row][col] instanceof WhitePawn && row == 0) ||
@@ -218,7 +260,13 @@ public abstract class BaseBoardPanel extends JPanel {
             }
         }
         updateBoard();
-        whiteTurn = !whiteTurn;
     }
+
+
+    protected void endTurn() {
+        whiteTurn = !whiteTurn;
+        updateBoard();
+    }
+
 
 }
