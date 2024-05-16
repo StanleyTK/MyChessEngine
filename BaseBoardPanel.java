@@ -15,7 +15,6 @@ public abstract class BaseBoardPanel extends JPanel {
     protected Stack<BoardState> moveHistory = new Stack<>();
 
 
-
     public BaseBoardPanel() {
         setLayout(new GridLayout(8, 8));
         boardCells = new JPanel[8][8];
@@ -261,7 +260,6 @@ public abstract class BaseBoardPanel extends JPanel {
         }
         updateBoard();
     }
-
 
     protected void endTurn() {
         whiteTurn = !whiteTurn;

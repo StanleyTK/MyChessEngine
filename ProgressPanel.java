@@ -4,6 +4,7 @@ import java.awt.*;
 public class ProgressPanel extends JPanel {
     private JLabel statusLabel;
     private BaseBoardPanel baseBoardPanel;
+    private JLabel bestMoveLabel;
 
     public ProgressPanel(BaseBoardPanel baseBoardPanel) {
         this.baseBoardPanel = baseBoardPanel;
@@ -17,8 +18,15 @@ public class ProgressPanel extends JPanel {
 
         statusLabel = createStyledLabel("Evaluation: 0", labelFont, labelColor);
         add(statusLabel);
+
+        add(Box.createVerticalStrut(10));
+
+        bestMoveLabel = createStyledLabel("Best Move: ", labelFont, labelColor);
+        add(bestMoveLabel);
+
         Timer timer = new Timer(300, e -> updateStatusLabel());
         timer.start();
+
     }
 
     private JLabel createStyledLabel(String text, Font font, Color color) {
@@ -32,5 +40,7 @@ public class ProgressPanel extends JPanel {
     private void updateStatusLabel() {
         int evaluation = baseBoardPanel.getBoardEvaluation();
         statusLabel.setText("Evaluation: " + evaluation);
+
+        bestMoveLabel.setText("Best Move: ");
     }
 }
