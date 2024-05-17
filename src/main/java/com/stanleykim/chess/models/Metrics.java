@@ -1,12 +1,12 @@
 package com.stanleykim.chess.models;
 
 public class Metrics {
-    public static final int PAWN_VAL = 100;
-    public static final int BISHOP_VAL = 330;
-    public static final int KNIGHT_VAL = 330;
-    public static final int ROOK_VAL = 500;
-    public static final int QUEEN_VAL = 900;
-    public static final int KING_VAL = 20000;
+    public static final double PAWN_VAL = 1;
+    public static final double BISHOP_VAL = 3;
+    public static final double KNIGHT_VAL = 3;
+    public static final double ROOK_VAL = 5;
+    public static final double QUEEN_VAL = 9;
+    public static final double KING_VAL = 30;
 
     public static final double[][] PAWN_W_EVAL = {
             {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00},

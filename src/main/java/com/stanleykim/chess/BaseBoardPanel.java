@@ -237,7 +237,7 @@ public abstract class BaseBoardPanel extends JPanel {
         moveHistory.clear();
     }
 
-    public int getBoardEvaluation() {
+    public double getBoardEvaluation() {
         return Evaluator.evaluateBoard(boardState);
     }
 
@@ -261,6 +261,18 @@ public abstract class BaseBoardPanel extends JPanel {
     protected void endTurn() {
         whiteTurn = !whiteTurn;
         updateBoard();
+    }
+
+    public void checkGameStatus() {
+        if (Utils.isCheck(boardState, whiteTurn)) {
+            if (Utils.isCheckmate(boardState, whiteTurn)) {
+                Utils.setKingCellRed(boardCells, boardState, whiteTurn); // Set the king cell red on checkmate
+                JOptionPane.showMessageDialog(this, "Checkmate! Game over.");
+            } else {
+                int[] kingPosition = Utils.findKing(boardState, whiteTurn);
+                Utils.blinkRed(boardCells, kingPosition[0], kingPosition[1]); // Blink king position on check
+            }
+        }
     }
 
 

@@ -1,6 +1,5 @@
 package com.stanleykim.chess;
 
-
 import com.stanleykim.chess.models.*;
 
 import java.awt.*;
@@ -9,13 +8,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Evaluator {
-    private static final int DEPTH = 10;
+    private static final int DEPTH = 5;
     private static ChessPiece[][] cachedBoardState;
     private static int cachedEvaluation;
     private static Random random = new Random();
 
-
-    public static int evaluateBoard(ChessPiece[][] boardState) {
+    public static double evaluateBoard(ChessPiece[][] boardState) {
         if (cachedBoardState != null && Arrays.deepEquals(boardState, cachedBoardState)) {
             return cachedEvaluation;
         }
@@ -43,7 +41,7 @@ public class Evaluator {
         return evaluation;
     }
 
-    private static int getPieceValue(ChessPiece piece, int row, int col, boolean isWhite) {
+    private static double getPieceValue(ChessPiece piece, int row, int col, boolean isWhite) {
         if (piece instanceof WhitePawn || piece instanceof BlackPawn) {
             return isWhite ? calculateScore(Metrics.PAWN_VAL, Metrics.PAWN_W_EVAL[row][col]) :
                     calculateScore(Metrics.PAWN_VAL, Metrics.PAWN_B_EVAL[row][col]);
@@ -71,8 +69,8 @@ public class Evaluator {
         return 0;
     }
 
-    private static int calculateScore(int pieceValue, double positionValue) {
-        return (int) (pieceValue + (pieceValue * positionValue));
+    private static double calculateScore(double pieceValue, double positionValue) {
+        return (pieceValue + (pieceValue * positionValue));
     }
 
     public static ChessPiece[][] copyBoardState(ChessPiece[][] boardState) {
@@ -95,25 +93,57 @@ public class Evaluator {
             return null;
         }
 
-//        return allPossibleMoves.get(random.nextInt(allPossibleMoves.size()));
         ChessPiece[][] bestMove = allPossibleMoves.get(0);
-        int maxVal = evaluateBoard(bestMove);
+        double minScore = evaluateBoard(bestMove);
+        int i = 0;
 
-        for (ChessPiece[][] allPossibleMove : allPossibleMoves) {
-            int score = minmax(allPossibleMove, DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, isWhite);
-            if (score > maxVal) {
-                maxVal = score;
-                bestMove = allPossibleMove;
+        for (ChessPiece[][] move : allPossibleMoves) {
+//            double score = minmax(baseBoardPanel, move, DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, isWhite);
+            double score = evaluateBoard(move);
+            System.out.println(++i + ": " + score);
+            if (score < minScore) {
+                minScore = score;
+                bestMove = move;
             }
-
         }
         return bestMove;
-
-
     }
 
-    private static int minmax(ChessPiece[][] chessPieces, int depth, int alpha, int beta, boolean isWhite) {
-        return -1;
+    private static double minmax(BaseBoardPanel baseBoardPanel, ChessPiece[][] board, int depth, double alpha, double beta, boolean isWhite) {
+        if (depth == 0) {
+            return evaluateBoard(board);
+        }
+        if (isWhite) {
+            double maxVal = Integer.MIN_VALUE;
+            ArrayList<ChessPiece[][]> allPossibleMoves = generateAllPossibleMoves(baseBoardPanel, board, true);
+            if (allPossibleMoves.isEmpty()) {
+                return Integer.MIN_VALUE;
+            }
+            for (ChessPiece[][] move : allPossibleMoves) {
+                double eval = minmax(baseBoardPanel, move, depth - 1, alpha, beta, false);
+                maxVal = Math.max(maxVal, eval);
+                alpha = Math.max(alpha, eval);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return maxVal;
+        } else {
+            double minVal = Integer.MAX_VALUE;
+            ArrayList<ChessPiece[][]> allPossibleMoves = generateAllPossibleMoves(baseBoardPanel, board, false);
+            if (allPossibleMoves.isEmpty()) {
+                return Integer.MAX_VALUE;
+            }
+            for (ChessPiece[][] move : allPossibleMoves) {
+                double eval = minmax(baseBoardPanel, move, depth - 1, alpha, beta, true);
+                minVal = Math.min(minVal, eval);
+                beta = Math.min(beta, eval);
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return minVal;
+        }
     }
 
     public static ArrayList<ChessPiece[][]> generateAllPossibleMoves(BaseBoardPanel baseBoardPanel, ChessPiece[][] board, boolean isWhiteTurn) {
@@ -131,34 +161,32 @@ public class Evaluator {
                         }
                         newBoardState = baseBoardPanel.movePiece(newBoardState, row, col, move.x, move.y, isWhiteTurn);
                         if (baseBoardPanel.isPromotion(newBoardState, move.x, move.y)) {
-                            ChessPiece[][] newBoardState5 = Evaluator.copyBoardState(newBoardState);
-                            newBoardState5[move.x][move.y] = isWhiteTurn ? new WhiteRook() : new BlackRook();
-                            allPossibleMoves.add(newBoardState5);
-
-                            ChessPiece[][] newBoardState2 = Evaluator.copyBoardState(newBoardState);
-                            newBoardState2[move.x][move.y] = isWhiteTurn ? new WhiteKnight() : new BlackKnight();
-                            allPossibleMoves.add(newBoardState2);
-
-                            ChessPiece[][] newBoardState3 = Evaluator.copyBoardState(newBoardState);
-                            newBoardState3[move.x][move.y] = isWhiteTurn ? new WhiteQueen() : new BlackQueen();
-                            allPossibleMoves.add(newBoardState3);
-
-                            ChessPiece[][] newBoardState4 = Evaluator.copyBoardState(newBoardState);
-                            newBoardState4[move.x][move.y] = isWhiteTurn ? new WhiteBishop() : new BlackBishop();
-                            allPossibleMoves.add(newBoardState4);
-
+                            addPromotedMoves(allPossibleMoves, newBoardState, move, isWhiteTurn);
                         } else {
                             allPossibleMoves.add(newBoardState);
-
                         }
                     }
                 }
             }
         }
-
         return allPossibleMoves;
     }
 
+    private static void addPromotedMoves(ArrayList<ChessPiece[][]> allPossibleMoves, ChessPiece[][] boardState, Point move, boolean isWhiteTurn) {
+        ChessPiece[][] newBoardState1 = Evaluator.copyBoardState(boardState);
+        newBoardState1[move.x][move.y] = isWhiteTurn ? new WhiteQueen() : new BlackQueen();
+        allPossibleMoves.add(newBoardState1);
 
+        ChessPiece[][] newBoardState2 = Evaluator.copyBoardState(boardState);
+        newBoardState2[move.x][move.y] = isWhiteTurn ? new WhiteRook() : new BlackRook();
+        allPossibleMoves.add(newBoardState2);
 
+        ChessPiece[][] newBoardState3 = Evaluator.copyBoardState(boardState);
+        newBoardState3[move.x][move.y] = isWhiteTurn ? new WhiteBishop() : new BlackBishop();
+        allPossibleMoves.add(newBoardState3);
+
+        ChessPiece[][] newBoardState4 = Evaluator.copyBoardState(boardState);
+        newBoardState4[move.x][move.y] = isWhiteTurn ? new WhiteKnight() : new BlackKnight();
+        allPossibleMoves.add(newBoardState4);
+    }
 }

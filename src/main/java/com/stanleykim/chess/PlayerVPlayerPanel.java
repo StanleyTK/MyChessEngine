@@ -26,18 +26,9 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
                     if (isPromotion(boardState, row, col)) {
                         boardState = promotePawn(boardState, row, col);
                     }
-                    updateBoard();
 
-                    if (Utils.isCheck(boardState, whiteTurn)) {
-                         if (Utils.isCheckmate(boardState, whiteTurn)) {
-                            Utils.setKingCellRed(boardCells, boardState, whiteTurn);
-                            System.out.println("Checkmate");
-                            // TODO frontend for checkmate
-                        } else {
-                            int[] king = Utils.findKing(boardState, whiteTurn);
-                            Utils.blinkRed(boardCells, king[0], king[1]);
-                        }
-                    }
+                    updateBoard();
+                    checkGameStatus();
 
                     endTurn();
                 }

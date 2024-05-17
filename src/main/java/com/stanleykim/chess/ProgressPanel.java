@@ -40,7 +40,7 @@ public class ProgressPanel extends JPanel {
     }
 
     private void updateStatusLabel() {
-        int evaluation = baseBoardPanel.getBoardEvaluation();
+        double evaluation = baseBoardPanel.getBoardEvaluation();
         statusLabel.setText("Evaluation: " + evaluation);
 //        int val = src.Evaluator.getBestMove(baseBoardPanel, baseBoardPanel.whiteTurn);
 

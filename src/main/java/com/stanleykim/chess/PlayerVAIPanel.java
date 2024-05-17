@@ -64,17 +64,7 @@ public class PlayerVAIPanel extends BaseBoardPanel {
         }
     }
 
-    private void checkGameStatus() {
-        if (Utils.isCheck(boardState, whiteTurn)) {
-            if (Utils.isCheckmate(boardState, whiteTurn)) {
-                Utils.setKingCellRed(boardCells, boardState, whiteTurn); // Set the king cell red on checkmate
-                JOptionPane.showMessageDialog(this, "Checkmate! Game over.");
-            } else {
-                int[] kingPosition = Utils.findKing(boardState, whiteTurn);
-                Utils.blinkRed(boardCells, kingPosition[0], kingPosition[1]); // Blink king position on check
-            }
-        }
-    }
+
 
     private void resetBoardColors() {
         for (int row = 0; row < 8; row++) {
