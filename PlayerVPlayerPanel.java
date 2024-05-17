@@ -24,7 +24,7 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
                     updateBoard();
 
                     if (Utils.isCheck(boardState, whiteTurn)) {
-                        if (Utils.isCheckmate(boardState, whiteTurn)) {
+                         if (Utils.isCheckmate(boardState, whiteTurn)) {
                             Utils.setKingCellRed(boardCells, boardState, whiteTurn);
                             System.out.println("Checkmate");
                             // TODO frontend for checkmate
