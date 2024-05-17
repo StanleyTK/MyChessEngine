@@ -13,6 +13,15 @@
     </properties>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <!-- Maven Jar Plugin -->
             <plugin>
@@ -28,7 +37,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
             <!-- Maven Exec Plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -40,5 +48,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

@@ -22,7 +22,7 @@ public class WhiteKing extends ChessPiece {
 
     @Override
     public String getImagePath() {
-        return "public/wK.png";
+        return "src/main/resources/public/wK.png";
     }
 
     @Override

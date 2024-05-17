@@ -21,7 +21,7 @@ public class WhiteRook extends ChessPiece {
 
     @Override
     public String getImagePath() {
-        return "public/wR.png";
+        return "src/main/resources/public/wR.png";
     }
 
     @Override

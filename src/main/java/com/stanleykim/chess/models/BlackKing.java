@@ -23,7 +23,7 @@ public class BlackKing extends ChessPiece {
 
     @Override
     public String getImagePath() {
-        return "public/bK.png";
+        return "src/main/resources/public/bK.png";
     }
 
     @Override
