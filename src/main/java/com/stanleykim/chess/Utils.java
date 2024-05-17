@@ -27,19 +27,67 @@ public class Utils {
         }
     }
 
-    public static boolean isMoveLegal(ChessPiece[][] boardState, boolean whiteTurn, int startRow, int startCol, int endRow, int endCol) {
-        ChessPiece originalPiece = boardState[endRow][endCol];
+    public static boolean isMoveLegal(ChessPiece[][] board, boolean whiteTurn, int startRow, int startCol, int endRow, int endCol) {
+        if ((startRow == 7 && startCol == 4 && endRow == 7 && (endCol == 2 || endCol == 6)) ||
+                (startRow == 0 && startCol == 4 && endRow == 0 && (endCol == 2 || endCol == 6))) {
+            if (board[startRow][startCol] instanceof WhiteKing || board[startRow][startCol] instanceof BlackKing ) {
+                if (isCheck(board, !whiteTurn)) {
+                    return false;
+                }
+                if (isRookAttacked(board, whiteTurn, startRow, startCol, endRow, endCol)) {
+                    return false;
+                }
+            }
+        }
+        ChessPiece originalPiece = board[endRow][endCol];
 
-        boardState[endRow][endCol] = boardState[startRow][startCol];
-        boardState[startRow][startCol] = null;
+        board[endRow][endCol] = board[startRow][startCol];
+        board[startRow][startCol] = null;
 
-        boolean inCheck = isCheck(boardState, !whiteTurn);
+        boolean inCheck = isCheck(board, !whiteTurn);
 
-        boardState[startRow][startCol] = boardState[endRow][endCol];
-        boardState[endRow][endCol] = originalPiece;
+        board[startRow][startCol] = board[endRow][endCol];
+        board[endRow][endCol] = originalPiece;
 
         return !inCheck;
     }
+
+    public static boolean isRookAttacked(ChessPiece[][] board, boolean whiteTurn, int startRow, int startCol, int endRow, int endCol) {
+        int rookStartCol = (endCol == 2) ? 0 : 7;  // 0 for queen-side castling, 7 for king-side castling
+        int rookEndCol = (endCol == 2) ? 3 : 5;    // Rook moves to these columns after castling
+
+        if (isPositionUnderAttack(board, whiteTurn, startRow, rookStartCol)) {
+            return false;  // Rook is attacked at its start position
+        }
+
+        ChessPiece rook = board[startRow][rookStartCol];
+        board[startRow][rookStartCol] = null;  // Remove rook from start
+        board[startRow][rookEndCol] = rook;    // Place rook at end position
+
+        boolean isAttacked = isPositionUnderAttack(board, whiteTurn, startRow, rookEndCol);
+
+        // Restore the rook to its original position
+        board[startRow][rookStartCol] = rook;
+        board[startRow][rookEndCol] = null;
+
+        return !isAttacked;
+    }
+
+    /**
+     * Helper method to determine if a position is under attack by any opponent's piece.
+     */
+    private static boolean isPositionUnderAttack(ChessPiece[][] board, boolean whiteTurn, int row, int col) {
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                ChessPiece piece = board[r][c];
+                if (piece != null && piece.isBlack() != whiteTurn && piece.isValidMove(r, c, row, col, board)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public static boolean isCheck(ChessPiece[][] boardState, boolean whiteTurn) {
         int kingRow = -1, kingCol = -1;
