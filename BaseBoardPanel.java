@@ -88,15 +88,21 @@ public abstract class BaseBoardPanel extends JPanel {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 boardCells[row][col].removeAll();
+
+                Color color = (row + col) % 2 == 0 ? Color.WHITE : Color.GRAY;
+                boardCells[row][col].setBackground(color);
+
                 if (boardState[row][col] != null) {
                     String imagePath = boardState[row][col].getImagePath();
                     Utils.loadImage(boardCells[row][col], imagePath);
                 }
+
                 boardCells[row][col].revalidate();
                 boardCells[row][col].repaint();
             }
         }
     }
+
 
     protected ChessPiece[][] movePiece(ChessPiece[][] board, int startRow, int startCol, int endRow, int endCol, boolean whiteTurn) {
         ChessPiece piece = board[startRow][startCol];

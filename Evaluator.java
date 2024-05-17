@@ -2,6 +2,7 @@ import models.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Evaluator {
 
@@ -81,9 +82,16 @@ public class Evaluator {
         return newBoardState;
     }
 
-    public static int getBestMove(BaseBoardPanel baseBoardPanel, boolean isWhite) {
-        ArrayList<ChessPiece [][]> allPossibleMoves = baseBoardPanel.generateAllPossibleMoves(baseBoardPanel.boardState, isWhite);
-        System.out.println("Size is about: " + allPossibleMoves.size());
-        return 69;
+    public static ChessPiece[][] getBestMove(BaseBoardPanel baseBoardPanel, boolean isWhite) {
+        ArrayList<ChessPiece[][]> allPossibleMoves = baseBoardPanel.generateAllPossibleMoves(baseBoardPanel.getBoardState(), isWhite);
+
+        if (allPossibleMoves.isEmpty()) {
+            return null;  // No available moves
+        }
+
+        // Randomly select a move from the list of possible moves
+        Random random = new Random();
+        int randomIndex = random.nextInt(allPossibleMoves.size());
+        return allPossibleMoves.get(randomIndex);
     }
 }
