@@ -19,7 +19,7 @@ public class ModePanel extends JPanel {
 
         // About section
         JTextArea aboutTextArea = new JTextArea(
-                "MyChessEngine is my Summer 2024 project designed to deepen understanding of chess and to explore chess engine algorithms such as the MinMax algorithm and various weighting systems. This project serves as both an educational tool and a foundation for developing advanced chess algorithms."
+                "MyChessEngine is my Summer 2024 project designed to deepen understanding of chess and to explore chess engine algorithms such as the MinMax algorithm and various weighting systems. This project serves as both an educational tool and a foundation for developing advanced chess algorithms.\n\nAuthor: Stanley Kim"
         );
         aboutTextArea.setFont(new Font("Segoe UI", Font.PLAIN, 16));  // Updated font
         aboutTextArea.setForeground(new Color(255, 255, 255));

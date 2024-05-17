@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Evaluator {
-    private static final int DEPTH = 4;
+    private static final int DEPTH = 5;
     private static ChessPiece[][] cachedBoardState;
-    private static double cachedEvaluation;
+    private static int cachedEvaluation;
 
-    public static double evaluateBoard(ChessPiece[][] boardState) {
+    public static int evaluateBoard(ChessPiece[][] boardState) {
         if (cachedBoardState != null && Arrays.deepEquals(boardState, cachedBoardState)) {
             return cachedEvaluation;
         }
@@ -34,9 +34,9 @@ public class Evaluator {
 
         double evaluation = totalWhiteScore - totalBlackScore;
         cachedBoardState = copyBoardState(boardState);
-        cachedEvaluation = evaluation;
+        cachedEvaluation = (int) evaluation;
 
-        return evaluation;
+        return (int) evaluation;
     }
 
     private static double getPieceValue(ChessPiece piece, int row, int col, boolean isWhite) {
