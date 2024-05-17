@@ -20,7 +20,10 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
                 } else {
                     moveHistory.push(new BoardState(boardState, whiteTurn));
                     boardState = movePiece(boardState, selectedPiece.x, selectedPiece.y, row, col, whiteTurn);
-
+                    // handle promotion if pawn gets to the end rank
+                    if (isPromotion(boardState, row, col)) {
+                        boardState = promotePawn(boardState, row, col);
+                    }
                     updateBoard();
 
                     if (Utils.isCheck(boardState, whiteTurn)) {

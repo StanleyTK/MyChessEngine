@@ -38,10 +38,10 @@ public class ProgressPanel extends JPanel {
     }
 
     private void updateStatusLabel() {
-        int evaluation = baseBoardPanel.getBoardEvaluation();
-        statusLabel.setText("Evaluation: " + evaluation);
-        int val = Evaluator.getBestMove(baseBoardPanel, baseBoardPanel.whiteTurn);
-
-        bestMoveLabel.setText("Best Move: " + val);
+//        int evaluation = baseBoardPanel.getBoardEvaluation();
+//        statusLabel.setText("Evaluation: " + evaluation);
+//        int val = Evaluator.getBestMove(baseBoardPanel, baseBoardPanel.whiteTurn);
+//
+//        bestMoveLabel.setText("Best Move: " + val);
     }
 }
