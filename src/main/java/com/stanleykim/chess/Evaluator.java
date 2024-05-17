@@ -12,6 +12,8 @@ public class Evaluator {
     private static final int DEPTH = 10;
     private static ChessPiece[][] cachedBoardState;
     private static int cachedEvaluation;
+    private static Random random = new Random();
+
 
     public static int evaluateBoard(ChessPiece[][] boardState) {
         if (cachedBoardState != null && Arrays.deepEquals(boardState, cachedBoardState)) {
@@ -87,34 +89,74 @@ public class Evaluator {
     }
 
     public static ChessPiece[][] getBestMove(BaseBoardPanel baseBoardPanel, boolean isWhite) {
-        ArrayList<ChessPiece[][]> allPossibleMoves = baseBoardPanel.generateAllPossibleMoves(baseBoardPanel.getBoardState(), isWhite);
+        ArrayList<ChessPiece[][]> allPossibleMoves = generateAllPossibleMoves(baseBoardPanel, baseBoardPanel.getBoardState(), isWhite);
 
         if (allPossibleMoves.isEmpty()) {
             return null;
         }
 
-//        ChessPiece[][] bestMove = allPossibleMoves.get(0);
-//        int maxVal = evaluateBoard(bestMove);
-//
-//        for (ChessPiece[][] allPossibleMove : allPossibleMoves) {
-//            int score = minmax(allPossibleMove, DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, isWhite);
-//            if (score > maxVal) {
-//                maxVal = score;
-//                bestMove = allPossibleMove;
-//            }
-//
-//        }
-        Random random = new Random();
-        return allPossibleMoves.get(random.nextInt(allPossibleMoves.size()));
+//        return allPossibleMoves.get(random.nextInt(allPossibleMoves.size()));
+        ChessPiece[][] bestMove = allPossibleMoves.get(0);
+        int maxVal = evaluateBoard(bestMove);
+
+        for (ChessPiece[][] allPossibleMove : allPossibleMoves) {
+            int score = minmax(allPossibleMove, DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, isWhite);
+            if (score > maxVal) {
+                maxVal = score;
+                bestMove = allPossibleMove;
+            }
+
+        }
+        return bestMove;
 
 
-
-
-//        return bestMove;
     }
 
     private static int minmax(ChessPiece[][] chessPieces, int depth, int alpha, int beta, boolean isWhite) {
         return -1;
+    }
+
+    public static ArrayList<ChessPiece[][]> generateAllPossibleMoves(BaseBoardPanel baseBoardPanel, ChessPiece[][] board, boolean isWhiteTurn) {
+        ArrayList<ChessPiece[][]> allPossibleMoves = new ArrayList<>();
+
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                ChessPiece piece = board[row][col];
+                if (piece != null && piece.isBlack() == !isWhiteTurn) {
+                    ArrayList<Point> validMoves = piece.getValidMoves(row, col, board);
+                    for (Point move : validMoves) {
+                        ChessPiece[][] newBoardState = Evaluator.copyBoardState(board);
+                        if (!Utils.isMoveLegal(newBoardState, isWhiteTurn, row, col, move.x, move.y)) {
+                            continue;
+                        }
+                        newBoardState = baseBoardPanel.movePiece(newBoardState, row, col, move.x, move.y, isWhiteTurn);
+                        if (baseBoardPanel.isPromotion(newBoardState, move.x, move.y)) {
+                            ChessPiece[][] newBoardState5 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState5[move.x][move.y] = isWhiteTurn ? new WhiteRook() : new BlackRook();
+                            allPossibleMoves.add(newBoardState5);
+
+                            ChessPiece[][] newBoardState2 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState2[move.x][move.y] = isWhiteTurn ? new WhiteKnight() : new BlackKnight();
+                            allPossibleMoves.add(newBoardState2);
+
+                            ChessPiece[][] newBoardState3 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState3[move.x][move.y] = isWhiteTurn ? new WhiteQueen() : new BlackQueen();
+                            allPossibleMoves.add(newBoardState3);
+
+                            ChessPiece[][] newBoardState4 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState4[move.x][move.y] = isWhiteTurn ? new WhiteBishop() : new BlackBishop();
+                            allPossibleMoves.add(newBoardState4);
+
+                        } else {
+                            allPossibleMoves.add(newBoardState);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        return allPossibleMoves;
     }
 
 
