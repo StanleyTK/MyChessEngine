@@ -5,21 +5,19 @@ import com.stanleykim.chess.models.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 public class Evaluator {
-    private static final int DEPTH = 5;
+    private static final int DEPTH = 4;
     private static ChessPiece[][] cachedBoardState;
-    private static int cachedEvaluation;
-    private static Random random = new Random();
+    private static double cachedEvaluation;
 
     public static double evaluateBoard(ChessPiece[][] boardState) {
         if (cachedBoardState != null && Arrays.deepEquals(boardState, cachedBoardState)) {
             return cachedEvaluation;
         }
 
-        int totalWhiteScore = 0;
-        int totalBlackScore = 0;
+        double totalWhiteScore = 0;
+        double totalBlackScore = 0;
 
         for (int i = 0; i < boardState.length; i++) {
             for (int j = 0; j < boardState[i].length; j++) {
@@ -34,7 +32,7 @@ public class Evaluator {
             }
         }
 
-        int evaluation = totalWhiteScore - totalBlackScore;
+        double evaluation = totalWhiteScore - totalBlackScore;
         cachedBoardState = copyBoardState(boardState);
         cachedEvaluation = evaluation;
 
@@ -94,15 +92,14 @@ public class Evaluator {
         }
 
         ChessPiece[][] bestMove = allPossibleMoves.get(0);
-        double minScore = evaluateBoard(bestMove);
+        double bestScore = isWhite ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         int i = 0;
-
+        System.out.println("\nStart analyzing: ");
         for (ChessPiece[][] move : allPossibleMoves) {
-//            double score = minmax(baseBoardPanel, move, DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, isWhite);
-            double score = evaluateBoard(move);
-            System.out.println(++i + ": " + score);
-            if (score < minScore) {
-                minScore = score;
+            double score = minmax(baseBoardPanel, move, DEPTH, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, !isWhite);
+            System.out.println(++i + ". Score: " + score);
+            if ((isWhite && score > bestScore) || (!isWhite && score < bestScore)) {
+                bestScore = score;
                 bestMove = move;
             }
         }
@@ -113,36 +110,30 @@ public class Evaluator {
         if (depth == 0) {
             return evaluateBoard(board);
         }
+        ArrayList<ChessPiece[][]> allPossibleMoves = generateAllPossibleMoves(baseBoardPanel, board, isWhite);
+
         if (isWhite) {
-            double maxVal = Integer.MIN_VALUE;
-            ArrayList<ChessPiece[][]> allPossibleMoves = generateAllPossibleMoves(baseBoardPanel, board, true);
-            if (allPossibleMoves.isEmpty()) {
-                return Integer.MIN_VALUE;
-            }
+            double maxEval = Double.NEGATIVE_INFINITY;
             for (ChessPiece[][] move : allPossibleMoves) {
                 double eval = minmax(baseBoardPanel, move, depth - 1, alpha, beta, false);
-                maxVal = Math.max(maxVal, eval);
+                maxEval = Math.max(maxEval, eval);
                 alpha = Math.max(alpha, eval);
                 if (beta <= alpha) {
                     break;
                 }
             }
-            return maxVal;
+            return maxEval;
         } else {
-            double minVal = Integer.MAX_VALUE;
-            ArrayList<ChessPiece[][]> allPossibleMoves = generateAllPossibleMoves(baseBoardPanel, board, false);
-            if (allPossibleMoves.isEmpty()) {
-                return Integer.MAX_VALUE;
-            }
+            double minEval = Double.POSITIVE_INFINITY;
             for (ChessPiece[][] move : allPossibleMoves) {
                 double eval = minmax(baseBoardPanel, move, depth - 1, alpha, beta, true);
-                minVal = Math.min(minVal, eval);
+                minEval = Math.min(minEval, eval);
                 beta = Math.min(beta, eval);
                 if (beta <= alpha) {
                     break;
                 }
             }
-            return minVal;
+            return minEval;
         }
     }
 

@@ -6,7 +6,7 @@ public class Metrics {
     public static final double KNIGHT_VAL = 3;
     public static final double ROOK_VAL = 5;
     public static final double QUEEN_VAL = 9;
-    public static final double KING_VAL = 30;
+    public static final double KING_VAL = 20;
 
     public static final double[][] PAWN_W_EVAL = {
             {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00},
@@ -70,8 +70,8 @@ public class Metrics {
             {-0.30, -0.40, -0.40, -0.50, -0.50, -0.40, -0.40, -0.30},
             {-0.20, -0.30, -0.30, -0.40, -0.40, -0.30, -0.30, -0.20},
             {-0.10, -0.20, -0.20, -0.20, -0.20, -0.20, -0.20, -0.10},
-            {0.20, 0.20, 0.00, 0.00, 0.00, 0.00, 0.20, 0.20},
-            {0.20, 0.30, 0.10, 0.00, 0.00, 0.10, 0.30, 0.20},
+            {0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00},
+            {0.10, 0.10, 0.10, 0.00, 0.00, 0.10, 0.10, 0.10},
     };
 
     public static final double[][] PAWN_B_EVAL = reverseArray(PAWN_W_EVAL);
