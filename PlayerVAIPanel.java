@@ -2,6 +2,10 @@ import models.*;
 
 import java.awt.*;
 import javax.swing.Timer;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PlayerVAIPanel extends BaseBoardPanel {
 
@@ -18,7 +22,7 @@ public class PlayerVAIPanel extends BaseBoardPanel {
                 boardCells[row][col].setBackground(Color.YELLOW);
             }
         } else {
-            boardCells[selectedPiece.x][selectedPiece.y].setBackground(originalColor);
+            resetBoardColors();  // Reset colors before updating the move
 
             if (boardState[selectedPiece.x][selectedPiece.y].isValidMove(selectedPiece.x, selectedPiece.y, row, col, boardState)) {
                 if (Utils.isMoveLegal(boardState, whiteTurn, selectedPiece.x, selectedPiece.y, row, col)) {
@@ -30,8 +34,10 @@ public class PlayerVAIPanel extends BaseBoardPanel {
                     }
 
                     updateBoard();
+                    checkGameStatus();
 
                     endTurn();  // End player's turn
+
 
                     // AI makes a move after a delay
                     Timer timer = new Timer(500, e -> performAIMove());
@@ -42,7 +48,6 @@ public class PlayerVAIPanel extends BaseBoardPanel {
                 }
             }
             selectedPiece = null;
-            boardCells[row][col].setBackground(originalColor);
         }
     }
 
@@ -51,10 +56,31 @@ public class PlayerVAIPanel extends BaseBoardPanel {
         if (newBoard != null) {
             boardState = newBoard;
             updateBoard();
+            checkGameStatus();
             endTurn();
         } else {
-            // Handle game over or no moves available
             System.out.println("Game over or no moves available.");
+        }
+    }
+
+    private void checkGameStatus() {
+        if (Utils.isCheck(boardState, whiteTurn)) {
+            if (Utils.isCheckmate(boardState, whiteTurn)) {
+                Utils.setKingCellRed(boardCells, boardState, whiteTurn); // Set the king cell red on checkmate
+                JOptionPane.showMessageDialog(this, "Checkmate! Game over.");
+            } else {
+                int[] kingPosition = Utils.findKing(boardState, whiteTurn);
+                Utils.blinkRed(boardCells, kingPosition[0], kingPosition[1]); // Blink king position on check
+            }
+        }
+    }
+
+    private void resetBoardColors() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Color color = (row + col) % 2 == 0 ? Color.WHITE : Color.GRAY;
+                boardCells[row][col].setBackground(color);
+            }
         }
     }
 }

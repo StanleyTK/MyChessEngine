@@ -84,6 +84,7 @@ public abstract class BaseBoardPanel extends JPanel {
         }
     }
 
+
     protected void updateBoard() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -213,6 +214,7 @@ public abstract class BaseBoardPanel extends JPanel {
     }
 
     public void handlePreviousMove() {
+        selectedPiece = null;
         if (!moveHistory.isEmpty()) {
             BoardState previousState = moveHistory.pop();
             this.boardState = previousState.getBoardState();
