@@ -49,8 +49,10 @@ public class ChessGame {
                 playerVAIPanel = new PlayerVAIPanel();
                 progressPanel = new ProgressPanel(playerVAIPanel);
                 controlPanel = new ControlPanel(playerVAIPanel);
+                playerVAIPanel.setProgressPanel(progressPanel);
                 frame.add(playerVAIPanel, BorderLayout.CENTER);
                 break;
+
             case AI_VS_AI:
                 playerVPlayerPanel = new PlayerVPlayerPanel();
                 progressPanel = new ProgressPanel(playerVPlayerPanel);

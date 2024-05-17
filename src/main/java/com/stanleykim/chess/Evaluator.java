@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Evaluator {
-    private static final int DEPTH = 5;
+    private static final int DEPTH = 4;
     private static ChessPiece[][] cachedBoardState;
     private static int cachedEvaluation;
 

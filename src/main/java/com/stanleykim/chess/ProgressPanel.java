@@ -6,7 +6,6 @@ import java.awt.*;
 public class ProgressPanel extends JPanel {
     private JLabel statusLabel;
     private BaseBoardPanel baseBoardPanel;
-    private JLabel bestMoveLabel;
 
     public ProgressPanel(BaseBoardPanel baseBoardPanel) {
         this.baseBoardPanel = baseBoardPanel;
@@ -18,7 +17,7 @@ public class ProgressPanel extends JPanel {
         Font labelFont = new Font("Segoe UI", Font.BOLD, 16);
         Color labelColor = Color.WHITE;
 
-        statusLabel = createStyledLabel("Evaluation: 0", labelFont, labelColor);
+        statusLabel = createStyledLabel("",labelFont, labelColor);
         add(statusLabel);
 
         add(Box.createVerticalStrut(10));
@@ -26,8 +25,6 @@ public class ProgressPanel extends JPanel {
 //        bestMoveLabel = createStyledLabel("Best Move: ", labelFont, labelColor);
 //        add(bestMoveLabel);
 
-        Timer timer = new Timer(1000, e -> updateStatusLabel());
-        timer.start();
 
     }
 
@@ -39,11 +36,10 @@ public class ProgressPanel extends JPanel {
         return label;
     }
 
-    private void updateStatusLabel() {
-        double evaluation = baseBoardPanel.getBoardEvaluation();
-        statusLabel.setText("Evaluation: " + evaluation);
-//        int val = src.Evaluator.getBestMove(baseBoardPanel, baseBoardPanel.whiteTurn);
 
-//        bestMoveLabel.setText("Best Move: SIKE" );
+    public void setStatusText(String s) {
+        System.out.println("Setting status text to: " + s);
+        statusLabel.setText(s);
     }
+
 }

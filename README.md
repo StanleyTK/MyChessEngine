@@ -1,6 +1,10 @@
 # MyChessEngine
+
+Download Link: https://drive.google.com/drive/folders/1g6TVNaikgLV6VBmlKgQzC5npMR0Qj6xv
 ### Important:
-The project is still under construction. (AI versus AI)
+* The project is still under construction. (AI versus AI)
+* The Player versus AI functionality Minmax algorithm's depth is set to 4 for optimal speed.
+* Rating: 1200 - 1500
 
 ## About
 

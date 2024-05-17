@@ -4,6 +4,7 @@ package com.stanleykim.chess;
 import com.stanleykim.chess.models.*;
 
 import java.awt.*;
+import java.util.concurrent.ExecutionException;
 import javax.swing.Timer;
 import javax.swing.*;
 
@@ -13,6 +14,12 @@ public class PlayerVAIPanel extends BaseBoardPanel {
     public PlayerVAIPanel() {
         super();
     }
+    private ProgressPanel progressPanel;
+
+    public void setProgressPanel(ProgressPanel progressPanel) {
+        this.progressPanel = progressPanel;
+    }
+
 
     @Override
     protected void handleCellClick(int row, int col) {
@@ -51,18 +58,47 @@ public class PlayerVAIPanel extends BaseBoardPanel {
             selectedPiece = null;
         }
     }
-
     private void performAIMove() {
-        ChessPiece[][] newBoard = Evaluator.getBestMove(this, whiteTurn);
-        if (newBoard != null) {
-            boardState = newBoard;
-            updateBoard();
-            checkGameStatus();
-            endTurn();
-        } else {
-            System.out.println("Game over or no moves available.");
+        if (progressPanel != null) {
+            System.out.println("AI starts thinking"); // Debug statement
+            progressPanel.setStatusText("AI is thinking...");
         }
+
+        // Simulating a delay for AI computation (e.g., heavy computation)
+        new SwingWorker<ChessPiece[][], Void>() {
+            @Override
+            protected ChessPiece[][] doInBackground() throws Exception {
+                // Simulate computation delay
+                Thread.sleep(2000); // Simulate delay
+                return Evaluator.getBestMove(PlayerVAIPanel.this, whiteTurn);
+            }
+
+            @Override
+            protected void done() {
+                ChessPiece[][] newBoard;
+                try {
+                    newBoard = get();
+                    if (newBoard != null) {
+                        boardState = newBoard;
+                        updateBoard();
+                        checkGameStatus();
+                        endTurn();
+                    } else {
+                        System.out.println("Game over or no moves available.");
+                    }
+
+                    if (progressPanel != null) {
+                        System.out.println("AI ends thinking"); // Debug statement
+                        progressPanel.setStatusText("Evaluation updated");
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute();
     }
+
+
 
 
 
