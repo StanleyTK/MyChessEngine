@@ -3,12 +3,13 @@ package com.stanleykim.chess;
 
 import com.stanleykim.chess.models.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class Evaluator {
-
+    private static final int DEPTH = 10;
     private static ChessPiece[][] cachedBoardState;
     private static int cachedEvaluation;
 
@@ -89,12 +90,33 @@ public class Evaluator {
         ArrayList<ChessPiece[][]> allPossibleMoves = baseBoardPanel.generateAllPossibleMoves(baseBoardPanel.getBoardState(), isWhite);
 
         if (allPossibleMoves.isEmpty()) {
-            return null;  // No available moves
+            return null;
         }
 
-        // Randomly select a move from the list of possible moves
+//        ChessPiece[][] bestMove = allPossibleMoves.get(0);
+//        int maxVal = evaluateBoard(bestMove);
+//
+//        for (ChessPiece[][] allPossibleMove : allPossibleMoves) {
+//            int score = minmax(allPossibleMove, DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, isWhite);
+//            if (score > maxVal) {
+//                maxVal = score;
+//                bestMove = allPossibleMove;
+//            }
+//
+//        }
         Random random = new Random();
-        int randomIndex = random.nextInt(allPossibleMoves.size());
-        return allPossibleMoves.get(randomIndex);
+        return allPossibleMoves.get(random.nextInt(allPossibleMoves.size()));
+
+
+
+
+//        return bestMove;
     }
+
+    private static int minmax(ChessPiece[][] chessPieces, int depth, int alpha, int beta, boolean isWhite) {
+        return -1;
+    }
+
+
+
 }

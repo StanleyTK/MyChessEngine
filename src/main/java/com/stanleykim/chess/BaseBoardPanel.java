@@ -262,8 +262,6 @@ public abstract class BaseBoardPanel extends JPanel {
         whiteTurn = !whiteTurn;
         updateBoard();
     }
-
-
     public ArrayList<ChessPiece[][]> generateAllPossibleMoves(ChessPiece[][] board, boolean isWhiteTurn) {
         ArrayList<ChessPiece[][]> allPossibleMoves = new ArrayList<>();
 
@@ -278,7 +276,27 @@ public abstract class BaseBoardPanel extends JPanel {
                             continue;
                         }
                         newBoardState = movePiece(newBoardState, row, col, move.x, move.y, isWhiteTurn);
-                        allPossibleMoves.add(newBoardState);
+                        if (isPromotion(newBoardState, move.x, move.y)) {
+                            ChessPiece[][] newBoardState5 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState5[move.x][move.y] = whiteTurn ? new WhiteRook() : new BlackRook();
+                            allPossibleMoves.add(newBoardState5);
+
+                            ChessPiece[][] newBoardState2 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState2[move.x][move.y] = whiteTurn ? new WhiteKnight() : new BlackKnight();
+                            allPossibleMoves.add(newBoardState2);
+
+                            ChessPiece[][] newBoardState3 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState3[move.x][move.y] = whiteTurn ? new WhiteQueen() : new BlackQueen();
+                            allPossibleMoves.add(newBoardState3);
+
+                            ChessPiece[][] newBoardState4 = Evaluator.copyBoardState(newBoardState);
+                            newBoardState4[move.x][move.y] = whiteTurn ? new WhiteBishop() : new BlackBishop();
+                            allPossibleMoves.add(newBoardState4);
+
+                        } else {
+                            allPossibleMoves.add(newBoardState);
+
+                        }
                     }
                 }
             }

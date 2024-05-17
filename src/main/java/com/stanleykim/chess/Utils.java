@@ -34,7 +34,7 @@ public class Utils {
                 if (isCheck(board, !whiteTurn)) {
                     return false;
                 }
-                if (isRookAttacked(board, whiteTurn, startRow, startCol, endRow, endCol)) {
+                if (isRookAttacked(board, !whiteTurn, startRow, startCol, endRow, endCol)) {
                     return false;
                 }
             }
@@ -57,20 +57,19 @@ public class Utils {
         int rookEndCol = (endCol == 2) ? 3 : 5;    // Rook moves to these columns after castling
 
         if (isPositionUnderAttack(board, whiteTurn, startRow, rookStartCol)) {
-            return false;  // Rook is attacked at its start position
+            return true;
         }
 
         ChessPiece rook = board[startRow][rookStartCol];
-        board[startRow][rookStartCol] = null;  // Remove rook from start
-        board[startRow][rookEndCol] = rook;    // Place rook at end position
+        board[startRow][rookStartCol] = null;
+        board[startRow][rookEndCol] = rook;
 
         boolean isAttacked = isPositionUnderAttack(board, whiteTurn, startRow, rookEndCol);
 
-        // Restore the rook to its original position
         board[startRow][rookStartCol] = rook;
         board[startRow][rookEndCol] = null;
 
-        return !isAttacked;
+        return isAttacked;
     }
 
     /**
@@ -202,5 +201,7 @@ public class Utils {
         }
         boardCells[kingRow][kingCol].setBackground(Color.RED);
     }
+
+
 
 }
