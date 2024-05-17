@@ -19,7 +19,9 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
                     Utils.blinkRed(boardCells, selectedPiece.x, selectedPiece.y);
                 } else {
                     moveHistory.push(new BoardState(boardState, whiteTurn));
-                    movePiece(boardState, selectedPiece.x, selectedPiece.y, row, col, whiteTurn);
+                    boardState = movePiece(boardState, selectedPiece.x, selectedPiece.y, row, col, whiteTurn);
+
+                    updateBoard();
 
                     if (Utils.isCheck(boardState, whiteTurn)) {
                         if (Utils.isCheckmate(boardState, whiteTurn)) {
@@ -31,10 +33,7 @@ public class PlayerVPlayerPanel extends BaseBoardPanel {
                             Utils.blinkRed(boardCells, king[0], king[1]);
                         }
                     }
-                    if ((selectedPiece.x == 7 && selectedPiece.y == 4 && row == 7 && (col == 2 || col == 6)) ||
-                            (selectedPiece.x == 0 && selectedPiece.y == 4 && row == 0 && (col == 2 || col == 6))) {
-                        handleCastling(selectedPiece.x, selectedPiece.y, row, col);
-                    }
+
                     endTurn();
                 }
             }
