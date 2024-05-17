@@ -21,7 +21,7 @@ public class BlackPawn extends ChessPiece {
 
     @Override
     public String getImagePath() {
-        return "/public/bP.png";
+        return "/public/bp.png";
     }
 
     @Override
