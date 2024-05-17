@@ -5,12 +5,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.imageio.ImageIO;
 public class Utils {
 
     public static void loadImage(JPanel square, String imagePath) {
         try {
-            Image img = ImageIO.read(new File(imagePath));
+            // Access the image as a resource stream
+            InputStream imgStream = ChessGame.class.getResourceAsStream(imagePath);
+            if (imgStream == null) {
+                System.err.println("Could not find image: " + imagePath);
+                return;
+            }
+            Image img = ImageIO.read(imgStream);
+
             square.setLayout(new BorderLayout());
             JLabel label = new JLabel(new ImageIcon(img));
             square.add(label);

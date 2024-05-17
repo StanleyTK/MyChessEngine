@@ -21,7 +21,7 @@ public class WhitePawn extends ChessPiece {
 
     @Override
     public String getImagePath() {
-        return "src/main/resources/public/wP.png";
+        return "/public/wP.png";
     }
 
     @Override

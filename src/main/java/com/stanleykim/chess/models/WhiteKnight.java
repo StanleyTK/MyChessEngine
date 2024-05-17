@@ -10,7 +10,7 @@ public class WhiteKnight extends ChessPiece {
 
     @Override
     public String getImagePath() {
-        return "src/main/resources/public/wN.png";
+        return "/public/wN.png";
     }
 
     @Override
