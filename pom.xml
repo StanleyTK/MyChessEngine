@@ -9,11 +9,12 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <mainClass>src.ChessGame</mainClass>
+        <mainClass>com.stanleykim.chess.ChessGame</mainClass>
     </properties>
 
     <build>
         <plugins>
+            <!-- Maven Jar Plugin -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
@@ -27,6 +28,17 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <!-- Maven Exec Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <mainClass>${mainClass}</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
 </project>
