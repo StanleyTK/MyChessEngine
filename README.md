@@ -32,7 +32,7 @@ This will start the chess game application. You can also download the JAR file f
 * Game Management: Allows for resetting the board and maintaining move histories to navigate back to previous moves. 
 * Evaluation System: Implements raw metrics and evaluation systems as groundwork for future algorithm enhancements. 
 * Maven Integration: Uses Maven to manage project dependencies and streamline the build and execution process, ensuring easy compilation and distribution.
-Player vs AI: Implemented functionality to support player versus AI gameplay mode, using MinMax algorithm with alpha/beta pruning.
+* Player vs AI: Implemented functionality to support player versus AI gameplay mode, using MinMax algorithm with alpha/beta pruning.
 
 ### Future Work 
 * Neural Network: Utilize neural networks for more sophisticated evaluation and decision-making. 
